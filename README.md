@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/bc6ee009-8175-40dd-a183-6c35b8f78b87
 
 ## Installation Instructions
 
-1. Download the latest version [here](assets/vsix/arena-0.1.0.vsix)
+1. [Download the latest version here](assets/vsix/arena-0.2.0.vsix)
 2. Open Visual Studio Code.
 3. Go to the Extensions view (Ctrl+Shift+X).
 4. Click on the "..." menu in the top-right corner of the Extensions view.
@@ -56,6 +56,6 @@ You can find these settings by searching for "arena" in your vscode settings.
 
 ## Have a question or feedback?
 
-Check out our [FAQs](faq.md) or submit an issue!
+Check out our [FAQs](FAQ.md) or submit an issue!
 
 
