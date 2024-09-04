@@ -2,22 +2,43 @@
 layout: default
 ---
 
-## Versions
+# Changelog
 
-- [0.2.0](/code-arena-project/assets/vsix/arena-0.2.0.vsix)
+All notable changes to the Code Arena Project will be documented in this file.
 
-## Changelog
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### 0.2.0
+## Frontend Changelog
 
-- Introduced visualizations for a personal leaderboard
+### [0.2.1] - 2024-09-03
+#### Changed
+- Optimized visualizations
+- Modified default behavior for users with 0 votes
+- Added filetype tracking
+
+#### Removed
+- Unused and experimental settings
+
+### [0.2.0] - 2024-09-02
+#### Added
+- Visualizations for personal leaderboard
+
+## Download Links
+- [Version 0.2.1](/code-arena-project/assets/vsix/arena-0.2.1.vsix)
+- [Version 0.2.0](/code-arena-project/assets/vsix/arena-0.2.0.vsix)
 
 ## Backend Changelog
 
-### 8/21/2024
+### [0.2.1] - 2024-09-03
+#### Changed
+- Updated elo scoring system
+- Implemented new prompt for scoring
 
-- Added modelTags
+### [1.1.0] - 2024-08-21
+#### Added
+- Support for modelTags
 
-### 8/20/2024
-
-- Added gemini-1.5-flash
+### [1.0.0] - 2024-08-20
+#### Added
+- Support for gemini-1.5-flash model
