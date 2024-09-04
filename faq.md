@@ -1,7 +1,3 @@
----
-layout: default
----
-
 # FAQ
 
 **Q: My tab isn't working / Copilot Arena doesn't work well with Copilot code completions!**
