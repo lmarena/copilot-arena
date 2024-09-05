@@ -42,8 +42,9 @@ Press ```Tab``` to accept the top completion and ```Shift-Tab``` to accept the b
 ![Preference Example](assets/img/model_pref_leaderboard.png)
 
 
-When you accept a completion, you can find out which model generated it by checking the status bar. After twenty votes, you will unlock your personal leaderboard, where you can find out which models you prefer and their corresponding elo scores. Based on our experience, everyone will have slightly different model preferences. Stay tuned for a global leaderboard. 
-
+- When you accept a completion, you can find out which model generated it by checking the status bar. 
+- After twenty votes, you will unlock your personal leaderboard, where you can find out which models you prefer and their corresponding elo scores. Based on our experience, everyone will have slightly different model preferences. Stay tuned for a global leaderboard. 
+- You can find the personal leaderboard by clicking on the `Copilot Arena` icon on the sidebar.
 
 
 ## Privacy
