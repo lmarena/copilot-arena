@@ -6,6 +6,9 @@ Our goal is to evaluate which language models provide the best coding assistance
 
 ![Demo](assets/img/demo.gif)
 
+
+Thank you for beta testing Copilot Arena! If you have feedback or suggestions, please submit an issue or join the conversation on [**Discord**](https://discord.gg/z4yzaj7bf7x) !
+
 ## Installation Instructions
 
 1. [Download the latest version here](assets/vsix/arena-0.2.1.vsix)
@@ -57,6 +60,6 @@ However, we log your code for the purposes of debugging. You can opt-out of this
 
 You can find these settings by searching for "arena" in your vscode settings.
 
-## Have a question or feedback?
+## Have a question?
 
-Check out our [FAQs](FAQ.md) or submit an issue!
+Check out our [FAQs](FAQ.md). 
