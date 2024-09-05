@@ -1,8 +1,8 @@
 # Copilot Arena
 
-Copilot Arena is an open source code AI coding assistant that provides paired autocomplete completions from different LLMs, which include state-of-the-art models like GPT-4o, Codestral, Llama-3.1 and more. Copilot Arena is **free** to use.
+Copilot Arena is an open source code AI coding assistant that provides paired autocomplete completions from different LLMs, which include state-of-the-art models like GPT-4o, Codestral, Llama-3.1 and more. Copilot Arena is **free** to use. Try it out to find out which models you like coding with!
 
-Our goal is to evaluate which language models provide the best coding assistance.
+Our goal is to evaluate which language models provide the best coding assistance. 
 
 ![Demo](assets/img/demo.gif)
 
@@ -37,13 +37,13 @@ Copilot Arena adopts a slightly different user interface compared to a typical c
 Press ```Tab``` to accept the top completion and ```Shift-Tab``` to accept the bottom completion. You can also choose to accept neither completion and continue typing.
 
 ### Viewing your model preferences
-After you accept a completion, you can find out which model generated it by checking the status bar!
 
-![Model Preference Example](assets/img/model_preference.png)
 
-After twenty votes, you will unlock your personal leaderboard, where you can find out which models you prefer and their corresponding elo scores. Based on our experience, everyone will have slightly different model preferences. Stay tuned for a global leaderboard. 
+![Preference Example](assets/img/model_pref_leaderboard.png)
 
-![Personal Leaderboard Example](assets/img/personal_leaderboard.png)
+
+When you accept a completion, you can find out which model generated it by checking the status bar. After twenty votes, you will unlock your personal leaderboard, where you can find out which models you prefer and their corresponding elo scores. Based on our experience, everyone will have slightly different model preferences. Stay tuned for a global leaderboard. 
+
 
 
 ## Privacy
