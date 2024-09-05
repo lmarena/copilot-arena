@@ -1,13 +1,13 @@
 # Copilot Arena
 
-Copilot Arena is an open source code AI coding assistant that provides paired autocomplete completions from different LLMs, which include state-of-the-art models like GPT-4o, Codestral, Llama-3.1 and more. Copilot Arena is **free** to use. Try it out to find out which models you like coding with!
+Copilot Arena is an open source code AI coding assistant that provides paired autocomplete completions from different LLMs, which include state-of-the-art models like GPT-4o, Codestral, Llama-3.1 and more. 
+- Copilot Arena is **free** to use. 
+- Our goal is to evaluate which language models provide the best coding assistance. 
+- Try it out to find out which models you like coding with!
 
-Our goal is to evaluate which language models provide the best coding assistance. 
+Thank you for beta testing Copilot Arena! If you have feedback or suggestions, please submit an issue or join the conversation on [**Discord**](https://discord.gg/z4yzaj7bf7x)!
 
 ![Demo](assets/img/demo.gif)
-
-
-Thank you for beta testing Copilot Arena! If you have feedback or suggestions, please submit an issue or join the conversation on [**Discord**](https://discord.gg/z4yzaj7bf7x) !
 
 ## Installation Instructions
 
