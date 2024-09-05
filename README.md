@@ -11,20 +11,16 @@ Thank you for beta testing Copilot Arena! If you have feedback or suggestions, p
 
 ## Installation Instructions
 
-1. [Download the latest version here](assets/vsix/arena-0.2.1.vsix)
-2. Open Visual Studio Code.
-3. Go to the Extensions view (Ctrl+Shift+X).
-4. Click on the "..." menu in the top-right corner of the Extensions view.
-5. Select "Install from VSIX..." and choose the downloaded file.
-6. Restart Visual Studio Code after installation.
-
-If you've installed Copilot Arena before, please delete the ~/.code-arena folder to prevent any issues with new updates.
+Download our extension from the Visual Studio Code Store.
 
 If installed successfully you will see Arena showing up on the bottom right corner of your window. 
 When a completion is being generated, the check mark changes to a spinning circle.
 
-## How do I use Copilot Arena?
+If you've installed Copilot Arena before and are encountering any issues, please delete the ~/.copilot-arena folder to prevent any issues with new updates.
 
+If you are unable to download from the store (or want to use it in a different IDE such as Cursor), [please follow the instructions here](INSTALL.md).
+
+## How do I use Copilot Arena?
 ### Understanding Your Completions
 
 Copilot Arena adopts a slightly different user interface compared to a typical code completion.
