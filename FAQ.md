@@ -15,6 +15,7 @@ Note that completions will not display if (a) you move away from the window or (
 
 You can also run the "Developer: Toggle Developer Tools" command to see debug logs. You should see logs like the following which indicate the completions are being generated.
 
+Also, if you've installed Copilot Arena before and are encountering any issues, please delete the ~/.copilot-arena folder to prevent any issues with new updates.
 
 **Q: What is the expected response time for a completion?**
 
