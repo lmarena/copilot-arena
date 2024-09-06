@@ -1,6 +1,6 @@
 # Copilot Arena
 
-| [**VSCode Store**](https://marketplace.visualstudio.com/items?itemName=copilot-arena.copilot-arena) | [**Discord**](https://discord.gg/z4yzaj7bf7x) | [**X**](https://x.com/CopilotArena) |
+| [**Discord**](https://discord.gg/z4yzaj7bf7x) | [**X**](https://x.com/CopilotArena) |
 
 Copilot Arena is an open source AI coding assistant that provides paired autocomplete completions from different LLMs, which include state-of-the-art models like GPT-4o, Codestral, Llama-3.1 and more. 
 - Copilot Arena is **free** to use. 
