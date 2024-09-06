@@ -4,6 +4,8 @@
 
 **A:** Yes, Copilot code completions don't work with Copilot Arena as (a) they both use the completions API and (b) they both require use of the tab key. You don't have to disable all of Copilot; instead, if you click on the copilot icon in the bottom right corner, you should be able to disable their completions feature only.
 
+If you are using vim mode, try disabling vim mode (or only requesting completions in vim insert mode)
+
 **Q: Copilot Arena is lagging my VSCode.**
 
 **A:** Please restart VSCode; it should fix itself in less than a minute after you restart the application. This should be fixed in the latest version, so if you are still experiencing this issue
