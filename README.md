@@ -20,6 +20,7 @@ Copilot Arena is an open source AI coding assistant that provides paired autocom
 
 Thank you for beta testing Copilot Arena! If you have feedback or suggestions, please submit an issue or join the conversation on [**Discord**](https://discord.gg/z4yzaj7bf7x)!
 
+Code coming soon!
 
 ## Installation Instructions
 
