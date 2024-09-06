@@ -21,7 +21,7 @@ Thank you for beta testing Copilot Arena! If you have feedback or suggestions, p
 
 ## Installation Instructions
 
-Download our extension from the Visual Studio Code Store.
+Download our extension from the [Visual Studio Code Store](https://marketplace.visualstudio.com/items?itemName=copilot-arena.copilot-arena).
 
 If installed successfully you will see Arena showing up on the bottom right corner of your window. 
 When a completion is being generated, the check mark changes to a spinning circle.
