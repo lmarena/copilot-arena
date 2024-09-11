@@ -61,13 +61,12 @@ Press ```Tab``` to accept the top completion and ```Shift-Tab``` to accept the b
 
 ## Privacy
 
-Your privacy is important to us. The code in your current file is sent to our servers and sent to various API providers. By default, we do not collect your code for research purposes; we only log your vote for the leaderboard.
-However, we log your code for the purposes of debugging. You can opt-out of this.
+Your privacy is important to us. The code in your current file is sent to our servers and sent to various API providers. By default, we collect your code for research purposes. You can opt-out of this.
 
-- To opt-in to data collection, please change `arena.codePrivacySettings` to `Research`.
+- To opt-out of data collection, please change `arena.codePrivacySettings` to `Debug`. We will only log your code for debugging.
 - To disable logging entirely, please change `arena.codePrivacySettings` to `Private`. Opting-out means any bugs you encounter will be non-reproducable on our end.
 
-You can find these settings by searching for "arena" in your vscode settings.
+You can find these settings by searching for "arena" in your vscode settings or clicking the gear button of the Copilot Arena extension -> Extension Settings.
 
 ## Have a question?
 

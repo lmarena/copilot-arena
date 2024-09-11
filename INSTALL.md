@@ -1,6 +1,6 @@
 # Manual Installation
 
-1. [Download the latest version here](assets/vsix/)
+1. [Download the latest version here](https://marketplace.visualstudio.com/items?itemName=copilot-arena.copilot-arena)
 2. Open Visual Studio Code or any Visual Studio compatible IDE.
 3. Go to the Extensions view (Ctrl+Shift+X).
 4. Click on the "..." menu in the top-right corner of the Extensions view.
