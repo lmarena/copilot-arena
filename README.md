@@ -82,7 +82,7 @@ You can find these settings by searching for "arena" in your vscode settings or 
 
 ### Removing your data
 
-If you would like to have the option in the future for us to delete any of your data, you must create an account on Copilot Arena following instructions described in . To remove your data, you can email any of the Copilot Arena maintainers with your username.
+If you would like to have the option in the future for us to delete any of your data, you must create an account on Copilot Arena following instructions described in ["Create an account"](#create-an-account). To remove your data, you can email any of the Copilot Arena maintainers with your username.
 
 
 ### Data Release
