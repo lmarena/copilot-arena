@@ -23,10 +23,10 @@ Code coming soon!
 ## Read This To Get Started
 
 Step 1: Download the Copilot Arena extension from the [Visual Studio Code Store](https://marketplace.visualstudio.com/items?itemName=copilot-arena.copilot-arena). 
-- If installed successfully, you will see Arena show up on the bottom right corner of your window. 
+- If installed successfully, you will see Arena show up on the bottom right corner of your window and the check mark changes to a spinning circle when a completion is being generated, 
 - Note, if you are using any other completion provider (e.g. Github Copilot), you must disable them when using Copilot Arena.
 
-Step 2: Read ["How do I use Copilot Arena?"](#how-do-i-use-copilot-arena) below to understand how to interact with paired completions. It's different than your standard autocomplete tool!
+Step 2: Copilot Arena currently supports two main feature: read [autocomplete](#autocomplete) and [in-line editing (beta)](#in-line-editing-beta) below to understand how to use each one. Since we show paired responses, the way you use them are slightly different than your standard AI coding tools!
 
 Step 3: This step is optional. If applicable, you can change what data is saved by Copilot Arena by following the instructions in ["Privacy Settings"](#privacy-settings).
 
@@ -34,20 +34,41 @@ Step 4: Create a username by clicking the `Copilot Arena` icon on the sidebar; d
 
 You are now ready to get coding with Copilot Arena!
 
-## How do I use Copilot Arena?
-### Understanding Your Completions
+## Table of Contents
 
-When a completion is being generated, the check mark changes to a spinning circle. Once a pair of completions appear, you will notice that Copilot Arena adopts a slightly different user interface compared to a typical code completion.
+- [In-line editing (beta)](#in-line-editing-beta)
+- [Autocomplete](#autocomplete)
+- [Personal Leaderboards](#personal-leaderboards)
+- [Privacy Settings](#privacy-settings)
+
+
+## In-line Editing (Beta)
+
+Introducing in-line editing! In-line edits allows you to modify larger portions of your code with a simple prompt.  
+
+![In-line Editing Example](assets/img/inline1.png)
+
+Here's how to generate in-line edits:
+- **Invoke edits:** Highlight any relevant code from your current file and press ```⌘+i```. Enter in your prompt (e.g., what would you like changed about the highlighted code). When edits are being generated, the check mark changes to a spinning circle.
+- **View paired edits:** Two new text files containing diffs between your original file and edited file will pop up. Similar to [autocomplete](#autocomplete), you will see a *pair* of edits.
+- **Select between edits:** Press ```⌘+1``` to accept the left edit and ```⌘+2``` to accept the right edit. To accept neither, press ```⌘+n``` to revert. Any changes will be automatically applied and the files showing diffs will be closed. You can always undo the change after if you would like.
+
+We welcome feedback on this beta feature! Please get in touch via Discord or raise an issue on the repo.
+
+## Autocomplete
+
+![Copilot Arena Example](assets/img/example.png)
+
+**Understanding completions:** When a completion is being generated, the check mark changes to a spinning circle. Once a pair of completions appear, you will notice that Copilot Arena adopts a slightly different user interface compared to a typical code completion.
 
 1. Copilot Arena displays two completions, one on top of the other.
 2. Copilot Arena repeats the same line prefix to keep the top and bottom outputs as similar as possible.
 
-![Copilot Arena Example](assets/img/example.png)
+**Accepting completions:** Press ```Tab``` to accept the top completion and ```Shift-Tab``` to accept the bottom completion. You can also choose to accept neither completion and continue typing.
 
-### Accepting Completions
-Press ```Tab``` to accept the top completion and ```Shift-Tab``` to accept the bottom completion. You can also choose to accept neither completion and continue typing.
+## Personal Leaderboards
 
-### Viewing your model preferences
+We've observed that individuals have different model preferences! We currently support personal leaderboards for autocomplete. In-line editing leaderboard is coming soon!
 
 
 ![Preference Example](assets/img/model_pref_leaderboard.png)
