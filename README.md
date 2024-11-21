@@ -26,7 +26,7 @@ Step 1: Download the Copilot Arena extension from the [Visual Studio Code Store]
 - If installed successfully, you will see Arena show up on the bottom right corner of your window and the check mark changes to a spinning circle when a completion is being generated, 
 - Note, if you are using any other completion provider (e.g. Github Copilot), you must disable them when using Copilot Arena.
 
-Step 2: Copilot Arena currently supports two main feature: read [autocomplete](#autocomplete) and [in-line editing (beta)](#in-line-editing-beta) below to understand how to use each one. Since we show paired responses, the way you use them are slightly different than your standard AI coding tools!
+Step 2: Copilot Arena currently supports two main feature: read [autocomplete](#autocomplete) and [in-line editing](#in-line-editing) below to understand how to use each one. Since we show paired responses, the way you use them are slightly different than your standard AI coding tools!
 
 Step 3: This step is optional. If applicable, you can change what data is saved by Copilot Arena by following the instructions in ["Privacy Settings"](#privacy-settings).
 
@@ -36,24 +36,28 @@ You are now ready to get coding with Copilot Arena!
 
 ## Table of Contents
 
-- [In-line editing (beta)](#in-line-editing-beta)
+- [In-line editing](#in-line-editing)
 - [Autocomplete](#autocomplete)
 - [Personal Leaderboards](#personal-leaderboards)
 - [Privacy Settings](#privacy-settings)
 
 
-## In-line Editing (Beta)
+## In-line Editing
 
-Introducing in-line editing! In-line edits allows you to modify larger portions of your code with a simple prompt.  
+In-line edits allow you to modify larger portions of your code with a simple prompt.  
 
 ![In-line Editing Example](assets/img/inline1.png)
 
 Here's how to generate in-line edits:
-- **Invoke edits:** Highlight any relevant code from your current file and press ```⌘+i```. Enter in your prompt (e.g., what would you like changed about the highlighted code). When edits are being generated, the check mark changes to a spinning circle.
+- **Invoke edits:** Highlight any relevant code from your current file and press ```⌘+i``` (Windows: ```Ctrl+i```). Enter in your prompt (e.g., what would you like changed about the highlighted code). When edits are being generated, the check mark changes to a spinning circle.
 - **View paired edits:** Two new text files containing diffs between your original file and edited file will pop up. Similar to [autocomplete](#autocomplete), you will see a *pair* of edits.
-- **Select between edits:** Press ```⌘+1``` to accept the left edit and ```⌘+2``` to accept the right edit. To accept neither, press ```⌘+n``` to revert. Any changes will be automatically applied and the files showing diffs will be closed. You can always undo the change after if you would like.
+- **Select between edits:** 
+  - Accept left edit: Mac ```⌘+1```, Windows ```Ctrl+1```
+  - Accept right edit: Mac ```⌘+2```, Windows ```Ctrl+2```
+  - Accept neither (revert): Mac ```⌘+3```, Windows ```Ctrl+3```. For old users, this was originally ```⌘+n```.
 
-We welcome feedback on this beta feature! Please get in touch via Discord or raise an issue on the repo.
+Any changes will be automatically applied and the files showing diffs will be closed. You can always undo the change after if you would like.
+We welcome feedback on this feature! Please get in touch via Discord or raise an issue on the repo.
 
 ## Autocomplete
 
