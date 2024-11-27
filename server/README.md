@@ -44,7 +44,7 @@ templates/chat_psm_overlap.yaml
 
 Editing templates can be found in:
 ```
-templates/edit/continue.yaml
+templates/edit/chat_edit.yaml
 ```
 
 ## Development
