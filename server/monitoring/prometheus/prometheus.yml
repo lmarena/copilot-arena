@@ -1,0 +1,23 @@
+global:
+  scrape_interval:     90s
+  evaluation_interval: 90s
+rule_files:
+  - "/app/prometheus/alerts.yml"
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+       - localhost:9093
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+  - job_name: arena_app
+    scrape_interval: 90s
+    file_sd_configs:
+      - files:
+        - '/app/config/prometheus.yml'
+  - job_name: alertmanager
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['localhost:9093']

@@ -1,0 +1,49 @@
+version: 1
+disable_existing_loggers: False
+formatters:
+  default:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  access:
+    format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+handlers:
+  default_console:
+    formatter: default
+    class: logging.StreamHandler
+    stream: ext://sys.stderr
+  access_console:
+    formatter: access
+    class: logging.StreamHandler
+    stream: ext://sys.stdout
+  default_file:
+    formatter: default
+    class: logging.handlers.RotatingFileHandler
+    filename: /app/logs/arena.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 3
+    encoding: utf8
+  access_file:
+    formatter: access
+    class: logging.handlers.RotatingFileHandler
+    filename: /app/logs/arena_access.log
+    maxBytes: 10485760  # 10MB
+    backupCount: 3
+    encoding: utf8
+loggers:
+  uvicorn.error:
+    level: INFO
+    handlers:
+      - default_console
+      - default_file
+    propagate: no
+  uvicorn.access:
+    level: INFO
+    handlers:
+      - access_console
+      - access_file
+    propagate: no
+root:
+  level: INFO
+  handlers:
+    - default_console
+    - default_file
+  propagate: no

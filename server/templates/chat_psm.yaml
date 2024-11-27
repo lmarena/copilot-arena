@@ -1,0 +1,45 @@
+messages:
+  - role: user
+    content: |
+      This is a code completion task. Fill in code and output nothing else. Respect spacing, new lines, and indentation. Use XML notation (e.g. <DIV></DIV>). Start with <CODE>
+
+      Example:
+      <PREFIX>
+      class Calculator {{
+        add(number) {{
+          this.result += 
+      </PREFIX>
+      <SUFFIX>
+        subtract(number) {{
+          this.result -= number;
+          return this;
+        }}
+      }}
+      </SUFFIX>
+      <CODE>
+      number;
+          return this;
+        }}
+      </CODE>
+
+      Task:
+      <PREFIX>
+      {prefix}
+      </PREFIX>
+      <SUFFIX>
+      {suffix}
+      </SUFFIX>
+
+stop_tokens:
+  - "</CODE>"
+  - "<SUFFIX>"
+  - "</SUFFIX>"
+  - "<PREFIX>"
+  - "</PREFIX>"
+
+start_phrases:
+  - "<CODE>\n"
+
+args:
+  - prefix
+  - suffix

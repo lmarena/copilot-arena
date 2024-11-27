@@ -1,0 +1,6 @@
+pytest
+pytest-asyncio
+ruff
+docker
+requests
+pytest-cov

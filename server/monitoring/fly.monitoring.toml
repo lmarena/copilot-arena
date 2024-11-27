@@ -1,0 +1,29 @@
+# fly.toml app configuration file generated for code-arena-monitor on 2024-10-26T09:36:37-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'code-arena-monitor'
+primary_region = 'iad'
+
+[build]
+  dockerfile = 'Dockerfile.monitoring'
+
+[[services]]
+  protocol = 'tcp'
+  internal_port = 9090
+
+  [[services.ports]]
+    port = 9090
+
+[[services]]
+  protocol = 'tcp'
+  internal_port = 9093
+
+  [[services.ports]]
+    port = 9093
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

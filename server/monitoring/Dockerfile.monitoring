@@ -1,0 +1,28 @@
+# Dockerfile for monitoring services
+FROM prom/prometheus:v2.30.3 as prometheus
+FROM prom/alertmanager:v0.23.0 as alertmanager
+
+FROM ubuntu:20.04
+
+RUN apt-get update && apt-get install -y wget
+
+COPY --from=prometheus /bin/prometheus /bin/prometheus
+COPY --from=prometheus /etc/prometheus/prometheus.yml /etc/prometheus/prometheus.yml
+COPY --from=alertmanager /bin/alertmanager /bin/alertmanager
+
+COPY prometheus/prometheus.yml /etc/prometheus/prometheus.yml
+COPY prometheus/alerts.yml /etc/prometheus/alerts.yml
+COPY alertmanager/alertmanager.yml /etc/alertmanager/alertmanager.yml
+
+EXPOSE 9090 9093
+
+RUN echo '#!/bin/bash\n\
+trap "kill -TERM 0" SIGTERM\n\
+/bin/prometheus --config.file=/etc/prometheus/prometheus.yml &\n\
+PROMETHEUS_PID=$!\n\
+/bin/alertmanager --config.file=/etc/alertmanager/alertmanager.yml &\n\
+ALERTMANAGER_PID=$!\n\
+wait $PROMETHEUS_PID $ALERTMANAGER_PID\n\
+' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]

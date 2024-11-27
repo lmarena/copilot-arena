@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  arena_app:
+    container_name: copilot_arena_app
+    build: .
+    environment:
+      - APP_CONFIG_YAML=${APP_CONFIG_YAML}
+      - FIREBASE_ACCOUNT_KEY=${FIREBASE_ACCOUNT_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - FIREWORKS_API_KEY=${FIREWORKS_API_KEY}
+      - AMPLITUDE_API_KEY=${AMPLITUDE_API_KEY}
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+  nginx:
+    container_name: copilot_nginx
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - arena_app

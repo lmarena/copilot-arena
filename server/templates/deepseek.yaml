@@ -1,0 +1,29 @@
+prompt: |
+  This is a code completion task. Fill in code and output nothing else. Avoid code blocks delimiters such as ```python. Respect spacing, new lines, and indentation.
+
+  Example:
+  <|fim_begin|>class Calculator {{
+    add(number) {{
+      this.result += <|fim_hole|>
+    subtract(number) {{
+      this.result -= number;
+      return this;
+    }}
+  }}<|fim_end|>number;
+      return this;
+    }}<|eos_token|>
+
+  Task:
+  <|fim_begin|>{prefix}<|fim_hole|>{suffix}<|fim_end|>
+
+stop_tokens:
+  - "<|eos_token|>"
+  - "<|fim_begin|>"
+  - "<|fim_hole|>"
+  - "<|fim_end|>"
+  - "\n \n"
+  - "\n\n"
+
+args:
+  - prefix
+  - suffix

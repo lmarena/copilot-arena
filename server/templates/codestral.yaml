@@ -1,0 +1,11 @@
+prompt: |
+  {prefix}
+
+stop_tokens:
+  - "[PREFIX]"
+  - "[SUFFIX]"
+  - "\n \n"
+  - "\n\n"
+
+args:
+  - prefix

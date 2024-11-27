@@ -1,0 +1,25 @@
+groups:
+- name: alert.rules
+  rules:
+  - alert: Instance_Down
+    expr: sum_over_time(up{job="arena_app"}[3m]) == 0
+    for: 3m
+    annotations:
+      severity: critical
+      description: codearena server down
+
+  - alert: LLM_Model_Connection_Error
+    expr: sum(increase(model_create_total{status="error"}[30m])) by (client, model) > 5
+    for: 30m
+    annotations:
+      severity: warning
+      summary: "LLM Model - Create error for {{ $labels.client }} - {{ $labels.model }}"
+      description: "{{ $labels.client }} has been experiencing errors for {{ $labels.model }}"
+
+  - alert: HTTP_Request_Error
+    expr: sum(increase(http_errors_total{status="500"}[30m])) by (endpoint, exception, method) > 5
+    for: 15m
+    annotations:
+      severity: warning
+      summary: "HTTP Errors on {{ $labels.endpoint }}"
+      description: "{{ $labels.method }} {{ $labels.endpoint }} has experienced {{ $value }} errors ({{ $labels.exception }})"    

@@ -1,0 +1,45 @@
+# Based on continue's editing prompt
+messages:
+  - role: user
+    content: |
+      The user has requested a section of code in a file to be rewritten.
+      
+      This is the prefix of the file:
+      ```{language}
+      {prefix}
+      ```
+
+      This is the suffix of the file:
+      ```{language}
+      {suffix}
+      ```
+
+      This is the code to rewrite:
+      ```{language}
+      {code_to_edit}
+      ```
+
+      You are an expert programmer. You will rewrite the above code to do the following:
+
+      {user_input}
+
+      Keep in mind indentations. Output only a code block with the rewritten code:
+
+
+stop_tokens:
+  - "<|eom_id|>"
+  - "</CODE>"
+  - "<SUFFIX>"
+  - "</SUFFIX>"
+  - "<PREFIX>"
+  - "</PREFIX>"
+
+start_phrases:
+  - "<CODE>\n"
+
+args:
+  - prefix
+  - suffix
+  - language
+  - code_to_edit
+  - user_input

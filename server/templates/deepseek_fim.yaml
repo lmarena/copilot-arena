@@ -1,0 +1,13 @@
+prompt: |
+  {prefix}
+
+stop_tokens:
+  - "\n\n"
+  - "\n \n"
+  - "<|eos_token|>"
+  - "<|fim_begin|>"
+  - "<|fim_hole|>"
+  - "<|fim_end|>"
+
+args:
+  - prefix
