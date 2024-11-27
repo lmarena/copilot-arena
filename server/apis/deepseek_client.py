@@ -12,32 +12,27 @@ from apis.utils import (
 from constants import MAX_RETRIES, TIMEOUT
 
 try:
-    from config.api_config import OPENAI_API_KEY
+    from config.api_config import DEEPSEEK_API_KEY
 except ImportError:
-    OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
+    DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
 
 
-class OpenAIClient(IBaseClient):
+class DeepseekClient(IBaseClient):
     def __init__(self) -> None:
         self.client = AsyncOpenAI(
-            api_key=OPENAI_API_KEY,
+            api_key=DEEPSEEK_API_KEY,
+            base_url="https://api.deepseek.com",
             max_retries=MAX_RETRIES,
             timeout=TIMEOUT,
         )
-        self.models = [
-            "gpt-4o-mini-2024-07-18",
-            "gpt-4o-2024-08-06",
-            "gpt-4o-2024-11-20",
-        ]
+        self.models = ["deepseek-coder"]
         chat_prompt_generators = [
             PromptGenerator("templates/chat_psm_overlap.yaml"),
             PromptGenerator("templates/edit/chat_edit.yaml"),
         ]
 
         self._prompt_generators = {
-            "gpt-4o-mini-2024-07-18": chat_prompt_generators,
-            "gpt-4o-2024-08-06": chat_prompt_generators,
-            "gpt-4o-2024-11-20": chat_prompt_generators,
+            "deepseek-coder": chat_prompt_generators,
         }
 
     async def stream(
@@ -102,29 +97,3 @@ class OpenAIClient(IBaseClient):
             prompt_index,
             model,
         )
-
-
-async def main():
-    client = OpenAIClient()
-    state = State(prefix="def add(", suffix="\n\ndef subtract(a, b):")
-    prompt_index = 0
-    options = LLMOptions(
-        temperature=0.5,
-        max_tokens=1024,
-        top_p=1.0,
-        max_lines=5,
-        prompt_index=prompt_index,
-    )
-
-    for model in client.models:
-        print("Prompt:")
-        print(client.generate_prompt_for_model(state, model, prompt_index=prompt_index))
-        print("Response:")
-        response = await client.create(state, model, options)
-        print(response)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main())

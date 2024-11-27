@@ -2,6 +2,7 @@ import pytest
 from apis.base_client import State, LLMOptions
 from apis.clients import (
     AnthropicClient,
+    DeepseekClient,
     DeepseekFimClient,
     MistralClient,
     OpenAIClient,
@@ -37,6 +38,15 @@ async def test_anthropic_client(state, options):
         result = await client.create(state, model, options)
         assert isinstance(result, str)
         print(f"AnthropicClient response for {model}: {result}")
+
+
+@pytest.mark.asyncio
+async def test_deepseek_client(state, options):
+    client = DeepseekClient()
+    for model in client.models:
+        result = await client.create(state, model, options)
+        assert isinstance(result, str)
+        print(f"DeepseekClient response for {model}: {result}")
 
 
 @pytest.mark.asyncio
