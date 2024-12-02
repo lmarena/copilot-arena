@@ -18,8 +18,6 @@ Copilot Arena is an open source AI coding assistant that provides paired autocom
 [![GitHub](https://img.shields.io/badge/valeriechen-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/valeriechen)
 [![Website](https://img.shields.io/badge/valeriechen.github.io-4285F4?style=flat-square&logo=google-chrome&logoColor=white)](https://valeriechen.github.io/)
 
-Code coming soon!
-
 ## Read This To Get Started
 
 Step 1: Download the Copilot Arena extension from the [Visual Studio Code Store](https://marketplace.visualstudio.com/items?itemName=copilot-arena.copilot-arena). 
@@ -33,6 +31,8 @@ Step 3: This step is optional. If applicable, you can change what data is saved 
 Step 4: Create a username by clicking the `Copilot Arena` icon on the sidebar; detailed instructions are also in ["Create an account"](#create-an-account). Your username will be used for a future leaderboard to compare individual preferences.
 
 You are now ready to get coding with Copilot Arena!
+
+**New!** We have recently open-sourced our backend code. Check out [this README](server/README.md) if you are interested in contributing prompts and new models. We welcome folks to get involved to improve Copilot Arena!
 
 ## Table of Contents
 
