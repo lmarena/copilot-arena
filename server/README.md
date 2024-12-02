@@ -22,10 +22,10 @@ For instructions on how to use Copilot Arena, check out the main [Copilot Arena 
 
 ```bash
 # Clone the repository
-git clone https://github.com/waynchi/copilot-arena-server.git
+git clone https://github.com/lmarena/copilot-arena.git
 
 # Navigate to the directory
-cd copilot-arena-server
+cd server
 
 # Install dependencies
 pip install -r requirements.txt
