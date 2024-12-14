@@ -7,6 +7,7 @@ from google.cloud.firestore_v1 import aggregation
 from src.privacy import PrivacySetting, clean_data
 from dotenv import load_dotenv, find_dotenv
 import pandas as pd
+from datetime import datetime, timedelta
 
 
 class FirebaseClient:
@@ -21,6 +22,7 @@ class FirebaseClient:
             self.cred = credentials.Certificate(config_dict)
         firebase_admin.initialize_app(self.cred)
         self.db = firestore.client()
+        self.call_timestamps = {}
 
     def upload_data(self, collection_name: str, data: dict, privacy: PrivacySetting):
         collection_ref = self.db.collection(collection_name)
@@ -31,6 +33,9 @@ class FirebaseClient:
     def get_autocomplete_outcomes(
         self, collection_name: str, user_id: str = None, batch_size: int = 1000
     ):
+        if user_id and not self._can_make_call(user_id):
+            raise Exception(f"Rate limit exceeded for user_id: {user_id}")
+
         query = self.db.collection(collection_name)
         if user_id:
             query = query.where(filter=firestore.FieldFilter("userId", "==", user_id))
@@ -50,11 +55,17 @@ class FirebaseClient:
             outcomes_df = pd.concat(dfs, ignore_index=True)
         else:
             outcomes_df = pd.DataFrame()
+        if user_id:
+            self._update_call_timestamp(user_id)
+
         return outcomes_df
 
     def get_autocomplete_outcomes_count(
         self, collection_name: str, user_id: str = None
     ):
+        if user_id and not self._can_make_call(user_id):
+            raise Exception(f"Rate limit exceeded for user_id: {user_id}")
+
         query = self.db.collection(collection_name)
         if user_id:
             query = query.where(filter=firestore.FieldFilter("userId", "==", user_id))
@@ -63,4 +74,18 @@ class FirebaseClient:
         aggregate_query.count(alias="all")
 
         results = aggregate_query.get()
-        return results[0][0].value
+        count = results[0][0].value
+
+        if user_id:
+            self._update_call_timestamp(user_id)
+
+        return count
+
+    def _can_make_call(self, user_id: str) -> bool:
+        if user_id not in self.call_timestamps:
+            return True
+        last_call_time = self.call_timestamps[user_id]
+        return datetime.now() - last_call_time > timedelta(minutes=1)
+
+    def _update_call_timestamp(self, user_id: str):
+        self.call_timestamps[user_id] = datetime.now()

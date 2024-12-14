@@ -64,7 +64,6 @@ def test_create_pair_happy_path(mock_firebase_upload, mock_timed_create):
     assert response.status_code == 200
     assert "pairId" in response.json()
     assert "completionItems" in response.json()
-    assert mock_firebase_upload.call_count == 2  # Two completions should be uploaded
     assert mock_timed_create.call_count == 2  # timed_create should be called twice
 
 

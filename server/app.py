@@ -232,6 +232,8 @@ class FastAPIApp:
             for model_name, model_info in self.settings["models"].items()
         }
 
+        self.user_scores_cache = {}
+
         # Calculate total weight for normalization
         total_weight = sum(self.model_weights.values())
 
@@ -1391,7 +1393,7 @@ class FastAPIApp:
             return {"models": list(self.models)}
 
         @self.app.post("/user_scores")
-        @self.limiter.limit("1000/minute")
+        @self.limiter.limit("100/minute")
         async def get_user_scores(request: Request):
             try:
                 try:
@@ -1407,9 +1409,7 @@ class FastAPIApp:
                     ).inc()
                     raise HTTPException(status_code=400, detail=error_msg)
 
-                required_keys = [
-                    "userId",
-                ]
+                required_keys = ["userId"]
                 if not all(key in data for key in required_keys):
                     error_msg = f"Request must contain {required_keys}"
                     logger.info(error_msg)
@@ -1429,21 +1429,32 @@ class FastAPIApp:
 
                 start_time = time.time()
                 logger.info("Personal Ranking User Id: {}".format(user_id))
-                outcomes_df = self.firebase_client.get_autocomplete_outcomes(
-                    autocomplete_outcomes_collection_name, user_id=user_id
-                )
-                end_time = time.time()
-                logger.info(
-                    f"Time taken to retrieve data for personal_ranking: {end_time - start_time:.2f} seconds"
-                )
 
-                start_time = time.time()
-                scores_over_time = get_scores(
-                    self.global_outcomes_df,
-                    outcomes_df,
-                    models=self.models,
-                    interval_size=20,
-                )
+                try:
+                    outcomes_df = self.firebase_client.get_autocomplete_outcomes(
+                        autocomplete_outcomes_collection_name, user_id=user_id
+                    )
+
+                    scores_over_time = get_scores(
+                        self.global_outcomes_df,
+                        outcomes_df,
+                        models=self.models,
+                        interval_size=20,
+                    )
+
+                    # Update cache with new scores
+                    self.user_scores_cache[user_id] = scores_over_time
+
+                except Exception as e:
+                    logger.error(f"Error getting scores for user {user_id}: {str(e)}")
+                    # Use cached scores if available
+                    if user_id in self.user_scores_cache:
+                        logger.info(f"Using cached scores for user {user_id}")
+                        scores_over_time = self.user_scores_cache[user_id]
+                    else:
+                        # If no cached data exists, re-raise the exception
+                        raise
+
                 end_time = time.time()
                 logger.info(
                     f"Time taken to calculate personal ranking: {end_time - start_time:.2f} seconds"
@@ -1467,7 +1478,7 @@ class FastAPIApp:
                 )
 
         @self.app.post("/user_vote_count")
-        @self.limiter.limit("1000/minute")
+        @self.limiter.limit("100/minute")
         async def get_user_vote_count(request: Request):
             try:
                 try:
