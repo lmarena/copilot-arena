@@ -249,9 +249,9 @@ class FastAPIApp:
         self.scheduler = AsyncIOScheduler()
         self.scheduler.add_job(
             self.update_global_outcomes_df,
-            trigger=IntervalTrigger(hours=1),
+            trigger=IntervalTrigger(hours=24),
             id="update_global_outcomes_df",
-            name="Update global outcomes DataFrame every hour",
+            name="Update global outcomes DataFrame every day",
             replace_existing=True,
         )
         self.scheduler.start()
@@ -935,7 +935,6 @@ class FastAPIApp:
 
             # Firebase upload
             firebase_upload_start = time.time()
-            collection = self.settings[self.FIREBASE_COLLECTIONS_KEY]["all_completions"]
             background_tasks.add_task(
                 self.amplitude.track,
                 BaseEvent(
@@ -952,18 +951,20 @@ class FastAPIApp:
                     },
                 ),
             )
-            background_tasks.add_task(
-                self.firebase_client.upload_data,
-                collection,
-                completionItem1,
-                privacy,
-            )
-            background_tasks.add_task(
-                self.firebase_client.upload_data,
-                collection,
-                completionItem2,
-                privacy,
-            )
+            # Removing this data from firebase
+            # collection = self.settings[self.FIREBASE_COLLECTIONS_KEY]["all_completions"]
+            # background_tasks.add_task(
+            #     self.firebase_client.upload_data,
+            #     collection,
+            #     completionItem1,
+            #     privacy,
+            # )
+            # background_tasks.add_task(
+            #     self.firebase_client.upload_data,
+            #     collection,
+            #     completionItem2,
+            #     privacy,
+            # )
             latency_breakdown["firebase_upload"] = time.time() - firebase_upload_start
 
             # Final response
