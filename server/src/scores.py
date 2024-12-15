@@ -5,7 +5,6 @@ import time
 import pandas as pd
 import math
 import numpy as np
-from src.firebase_client import FirebaseClient
 from typing import List
 from dataclasses import dataclass
 from sklearn.linear_model import LogisticRegression
@@ -397,65 +396,3 @@ def get_scores(
     elo_ratings_over_time.append(elo_ratings_list)
 
     return elo_ratings_over_time
-
-
-if __name__ == "__main__":
-    # Test out firebase retrieval
-    firebase_client = FirebaseClient()
-    models = [
-        "gpt-4o-mini-2024-07-18",
-        "deepseek-coder-fim",
-        "codestral-2405",
-        "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
-        "gemini-1.5-flash-001",
-        "gemini-1.5-pro-001",
-        "claude-3-5-sonnet-20240620",
-        "gpt-4o-2024-08-06",
-        "chatgpt-4o-latest",
-        "gemini-1.5-flash-exp-0827",
-        "gemini-1.5-pro-exp-0827",
-    ]
-
-    ###Replace this with however you get autocomplete_outcomes and autocomplete_compeltions###
-    version_num = "v1"  # SWITCH TO V5
-    ################################################################################################
-    autocomplete_outcomes_collection_name = "autocomplete_outcomes_" + str(version_num)
-    start_time = time.time()
-    global_outcomes_df = firebase_client.get_autocomplete_outcomes(
-        autocomplete_outcomes_collection_name
-    )
-    breakpoint()
-
-    user_ids = global_outcomes_df["userId"].unique()
-    user_ids = [user_id for user_id in user_ids]
-
-    success = 0
-    for user_id in user_ids:
-        user_outcomes_df = global_outcomes_df[global_outcomes_df["userId"] == user_id]
-        temp_global_outcomes_df = global_outcomes_df[
-            global_outcomes_df["userId"] != user_id
-        ]
-        if len(user_outcomes_df) < 20:
-            continue
-
-        print(user_outcomes_df.shape)
-        start_time = time.time()
-        scores_over_time = get_scores(
-            temp_global_outcomes_df, user_outcomes_df, models=models
-        )
-        end_time = time.time()
-        print(f"Time taken for get_scores: {end_time - start_time:.2f} seconds")
-        print(user_id)
-        print(scores_over_time)
-
-        if len(scores_over_time) > 0:
-            success += 1
-            break
-    print(success)
-
-    # Write user_lambdas to a json file
-    # import json
-
-    # with open("user_lambdas.json", "w") as outfile:
-    #     json.dump(user_lambdas, outfile)
-    # print(f"Time taken: {time.time() - start_time:.2f} seconds")

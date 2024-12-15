@@ -23,8 +23,15 @@ class FirebaseClient:
         firebase_admin.initialize_app(self.cred)
         self.db = firestore.client()
         self.call_timestamps = {}
+        self.function_call_count = {
+            "upload_data": 0,
+            "get_autocomplete_outcomes": 0,
+            "get_autocomplete_outcomes_count": 0,
+        }
 
     def upload_data(self, collection_name: str, data: dict, privacy: PrivacySetting):
+        self.function_call_count["upload_data"] += 1
+        print(self.function_call_count)
         collection_ref = self.db.collection(collection_name)
         if privacy != PrivacySetting.RESEARCH:
             data = clean_data(data)
@@ -33,6 +40,8 @@ class FirebaseClient:
     def get_autocomplete_outcomes(
         self, collection_name: str, user_id: str = None, batch_size: int = 1000
     ):
+        self.function_call_count["get_autocomplete_outcomes"] += 1
+        print(self.function_call_count)
         if user_id and not self._can_make_call(user_id):
             raise Exception(f"Rate limit exceeded for user_id: {user_id}")
 
@@ -60,9 +69,9 @@ class FirebaseClient:
 
         return outcomes_df
 
-    def get_autocomplete_outcomes_count(
-        self, collection_name: str, user_id: str = None
-    ):
+    def get_autocomplete_outcomes_count(self, collection_name: str, user_id):
+        self.function_call_count["get_autocomplete_outcomes_count"] += 1
+        print(self.function_call_count)
         if user_id and not self._can_make_call(user_id):
             raise Exception(f"Rate limit exceeded for user_id: {user_id}")
 

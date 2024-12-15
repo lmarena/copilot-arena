@@ -18,5 +18,5 @@ EXPOSE 5000
 ENV NAME World
 
 # Run app.py when the container launches
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000", "--workers", "4", "--log-config", "log_conf.yaml"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "5000", "--workers", "2", "--log-config", "log_conf.yaml"]
 
