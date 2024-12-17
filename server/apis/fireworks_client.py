@@ -1,5 +1,5 @@
 import os
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, APITimeoutError
 from apis.base_client import IBaseClient, LLMOptions, State
 from prompts.prompt_generator import PromptGenerator
 from apis.utils import (
@@ -10,6 +10,7 @@ from apis.utils import (
     get_prompt_options_for_model,
 )
 from constants import MAX_RETRIES, TIMEOUT
+from src.errors import ModelTimeoutError
 
 try:
     from config.api_config import FIREWORKS_API_KEY
@@ -68,33 +69,36 @@ class FireworksClient(IBaseClient):
         prompt = self.generate_prompt_for_model(state, model, options.prompt_index)
         stop_tokens = self.generate_stop_tokens_for_model(model, options.prompt_index)
 
-        response = await self.client.chat.completions.create(
-            messages=prompt,
-            model=self.model_name_map[model],  # Map to the official name
-            temperature=options.temperature,
-            max_tokens=options.max_tokens,
-            top_p=options.top_p,
-            stop=stop_tokens[:4],
-            stream=False,
-        )
+        try:
+            response = await self.client.chat.completions.create(
+                messages=prompt,
+                model=self.model_name_map[model],  # Map to the official name
+                temperature=options.temperature,
+                max_tokens=options.max_tokens,
+                top_p=options.top_p,
+                stop=stop_tokens[:4],
+                stream=False,
+            )
 
-        response = response.choices[0].message.content
-        completion = parse_response(
-            response,
-            options.max_lines,
-            stop_tokens,
-            generate_start_phrases_for_model(
-                self._prompt_generators,
-                options.prompt_index,
-                model,
-            ),
-            state,
-            get_prompt_options_for_model(
-                self._prompt_generators, options.prompt_index, model
-            ),
-        )
+            response = response.choices[0].message.content
+            completion = parse_response(
+                response,
+                options.max_lines,
+                stop_tokens,
+                generate_start_phrases_for_model(
+                    self._prompt_generators,
+                    options.prompt_index,
+                    model,
+                ),
+                state,
+                get_prompt_options_for_model(
+                    self._prompt_generators, options.prompt_index, model
+                ),
+            )
 
-        return completion
+            return completion
+        except APITimeoutError as e:
+            raise ModelTimeoutError(model=model, original_error=e)
 
     def generate_prompt_for_model(self, state: State, model: str, prompt_index: int):
         return generate_prompt_for_model(

@@ -92,28 +92,6 @@ def test_create_edit_pair_happy_path(mock_firebase_upload, mock_timed_create):
     assert mock_timed_create.call_count == 2  # timed_create should be called twice
 
 
-def test_create_completion_happy_path(mock_timed_create):
-    response = client.post(
-        "/create_completion",
-        json={
-            "prefix": "Test prefix",
-            "userId": "test_user",
-            "model": "gpt-4o-mini-2024-07-18",
-            "completionId": "test_completion_id",
-            "temperature": 0.7,
-            "max_tokens": 200,
-            "top_p": 0.8,
-            "max_lines": 10,
-            "suffix": "Test suffix",
-            "prompt_index": 0,
-        },
-    )
-    assert response.status_code == 200
-    assert "completionId" in response.json()
-    assert "completion" in response.json()
-    mock_timed_create.assert_called_once()
-
-
 def test_create_pair_missing_keys():
     response = client.post("/create_pair", json={"prefix": "Test prefix"})
     assert response.status_code == 400

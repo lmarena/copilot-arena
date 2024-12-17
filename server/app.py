@@ -48,6 +48,7 @@ from src.user_repository import (
     UsernameExistsError,
     PasswordIncorrectError,
 )
+from src.errors import ModelTimeoutError
 
 
 try:
@@ -160,7 +161,20 @@ def handle_exceptions(func):
         except HTTPException:
             raise
         except Exception as e:
-            if "429" in str(e):
+            if isinstance(e, ModelTimeoutError):
+                error_msg = f"Service temporarily unavailable due to timeout for model: {e.model}"
+                logger.error(error_msg)
+                ERROR_COUNT.labels(
+                    method=method,
+                    endpoint=endpoint,
+                    exception="TimeoutError",
+                    status=503,
+                ).inc()
+                raise HTTPException(
+                    status_code=503,
+                    detail="Timeout",
+                )
+            elif "429" in str(e):
                 logger.error("Rate limit exceeded.")
                 ERROR_COUNT.labels(
                     method=method,
@@ -171,15 +185,6 @@ def handle_exceptions(func):
                 raise HTTPException(
                     status_code=429,
                     detail="Rate limit exceeded. Please try again later.",
-                )
-            elif "timed out" in str(e).lower() or "timeout" in str(e).lower():
-                logger.error("API timeout occurred.")
-                ERROR_COUNT.labels(
-                    method=method, endpoint=endpoint, exception="Timeout", status=504
-                ).inc()
-                raise HTTPException(
-                    status_code=504,
-                    detail="API request timed out. Please try again later.",
                 )
             else:
                 error_msg = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"

@@ -1,5 +1,5 @@
 import os
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, APITimeoutError
 from apis.base_client import IBaseClient, LLMOptions, State
 from apis.utils import (
     generate_prompt_for_model,
@@ -10,6 +10,7 @@ from apis.utils import (
 )
 from prompts.prompt_generator import PromptGenerator
 from constants import MAX_RETRIES, TIMEOUT
+from src.errors import ModelTimeoutError
 
 try:
     from config.api_config import DEEPSEEK_API_KEY
@@ -55,30 +56,33 @@ class DeepseekFimClient(IBaseClient):
             model, options.prompt_index
         )
 
-        response = await self.client.completions.create(
-            model="deepseek-coder",  # Hardcoded model as it shares the same name with deepseek-coder (instruct)
-            prompt=prompt,
-            suffix=state.suffix,
-            temperature=options.temperature,
-            max_tokens=options.max_tokens,
-            top_p=options.top_p,
-            stop=stop_tokens,
-            stream=False,
-        )
+        try:
+            response = await self.client.completions.create(
+                model="deepseek-coder",  # Hardcoded model as it shares the same name with deepseek-coder (instruct)
+                prompt=prompt,
+                suffix=state.suffix,
+                temperature=options.temperature,
+                max_tokens=options.max_tokens,
+                top_p=options.top_p,
+                stop=stop_tokens,
+                stream=False,
+            )
 
-        # Move this into a util function called parse_response
-        response = response.choices[0].text
-        completion = parse_response(
-            response,
-            options.max_lines,
-            stop_tokens,
-            start_phrases,
-            state,
-            get_prompt_options_for_model(
-                self._prompt_generators, options.prompt_index, model
-            ),
-        )
-        return completion
+            # Move this into a util function called parse_response
+            response = response.choices[0].text
+            completion = parse_response(
+                response,
+                options.max_lines,
+                stop_tokens,
+                start_phrases,
+                state,
+                get_prompt_options_for_model(
+                    self._prompt_generators, options.prompt_index, model
+                ),
+            )
+            return completion
+        except APITimeoutError as e:
+            raise ModelTimeoutError(model=model, original_error=e)
 
     def generate_prompt_for_model(self, state: State, model: str, prompt_index: int):
         return generate_prompt_for_model(
