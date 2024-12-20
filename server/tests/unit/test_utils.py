@@ -148,3 +148,14 @@ def test_parse_response_multiple_stop_tokens():
 
     result = parse_response(completion, max_lines, stop_tokens, start_phrases, state)
     assert result == "\nLine 1\nLine 2\n"
+
+
+def test_parse_response_escaped_newlines_in_string():
+    completion = 'print("Line 1\\nLine 2\\nLine 3")'
+    max_lines = 10
+    stop_tokens = []
+    start_phrases = []
+    state = State(prefix="", suffix="")
+
+    result = parse_response(completion, max_lines, stop_tokens, start_phrases, state)
+    assert result == 'print("Line 1\\nLine 2\\nLine 3")'

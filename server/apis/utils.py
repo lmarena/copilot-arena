@@ -161,7 +161,6 @@ def parse_response(
 
     prefix = state.prefix
     suffix = state.suffix
-    completion = completion.replace("\\n", "\n")
 
     if "overlap" in prompt_options:
         # strip ending newline from suffix and completion (but not any starting newlines)

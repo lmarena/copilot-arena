@@ -168,10 +168,10 @@ def handle_exceptions(func):
                     method=method,
                     endpoint=endpoint,
                     exception="TimeoutError",
-                    status=503,
+                    status=504,
                 ).inc()
                 raise HTTPException(
-                    status_code=503,
+                    status_code=504,
                     detail="Timeout",
                 )
             elif "429" in str(e):
@@ -632,6 +632,7 @@ class FastAPIApp:
 
         @self.app.post("/create_pair")
         @self.limiter.limit("300/minute")
+        @handle_exceptions
         async def create_pair(request: Request, background_tasks: BackgroundTasks):
             start_time = time.time()
             latency_breakdown = {}
@@ -1414,6 +1415,7 @@ class FastAPIApp:
                         scores_over_time = self.user_scores_cache[user_id]
                     else:
                         # If no cached data exists, re-raise the exception
+                        logger.error("Rate limited, but scores not cached")
                         raise
 
                 end_time = time.time()
