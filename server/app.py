@@ -21,7 +21,7 @@ from apis.clients import (
     FireworksClient,
 )
 from src.utils import get_settings, get_models_by_tags, get_cost
-from apis.base_client import State, LLMOptions
+from apis.base_client import State, LLMOptions, LLMResponse
 from src.firebase_client import FirebaseClient
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -81,7 +81,7 @@ MODEL_CREATE_LATENCY = Histogram(
 )
 
 
-async def timed_create(client, state, model, options):
+async def timed_create(client: IBaseClient, state, model, options):
     try:
         print(f"Starting {client.__class__.__name__}.create for model {model}")
         start_time = asyncio.get_event_loop().time()
@@ -91,7 +91,7 @@ async def timed_create(client, state, model, options):
         print(
             f"Finished {client.__class__.__name__}.create for model {model}. Took {latency:.4f} seconds"
         )
-        print(f"result {model}: {result}")
+        print(f"result {model}: {result.text}")
         MODEL_CREATE_COUNT.labels(
             client=client.__class__.__name__, model=model, status="success"
         ).inc()
@@ -507,8 +507,12 @@ class FastAPIApp:
                 prefix_tokens = []
                 suffix_tokens = []
 
-            response1_tokens = self.encoding.encode(response1, allowed_special="all")
-            response2_tokens = self.encoding.encode(response2, allowed_special="all")
+            response1_tokens = self.encoding.encode(
+                response1.text, allowed_special="all"
+            )
+            response2_tokens = self.encoding.encode(
+                response2.text, allowed_special="all"
+            )
 
             latency_breakdown["encoding"] = time.time() - encoding_start
 
@@ -543,7 +547,8 @@ class FastAPIApp:
                 "response_token_length": len(response1_tokens),
                 "model_1_cost": model_1_cost,
                 "latency": latency1,
-                "response": response1,
+                "response": response1.text,
+                "raw_response": response1.raw_text,
                 "model": selected_models[0],
                 "pairResponseId": responseId2,
                 "pairIndex": 0,
@@ -570,7 +575,8 @@ class FastAPIApp:
                 "response_token_length": len(response2_tokens),
                 "model_2_cost": model_2_cost,
                 "latency": latency2,
-                "response": response2,
+                "response": response2.text,
+                "raw_response": response2.raw_text,
                 "model": selected_models[1],
                 "pairResponseId": responseId1,
                 "pairIndex": 1,
@@ -815,10 +821,10 @@ class FastAPIApp:
                 suffix_tokens = []
 
             completion1_tokens = self.encoding.encode(
-                completion1, allowed_special="all"
+                completion1.text, allowed_special="all"
             )
             completion2_tokens = self.encoding.encode(
-                completion2, allowed_special="all"
+                completion2.text, allowed_special="all"
             )
 
             latency_breakdown["encoding"] = time.time() - encoding_start
@@ -846,7 +852,7 @@ class FastAPIApp:
                 "prompt_length": prompt1_length,
                 "prefix_length": len(state.prefix),
                 "suffix_length": len(state.suffix),
-                "completion_length": len(completion1),
+                "completion_length": len(completion1.text),
                 "prompt_token_length": len(prompt1_tokens),
                 "prefix_token_length": len(prefix_tokens),
                 "suffix_token_length": len(suffix_tokens),
@@ -855,7 +861,8 @@ class FastAPIApp:
                 "completion_token_length": len(completion1_tokens),
                 "model_1_cost": model_1_cost,
                 "latency": latency1,
-                "completion": completion1,
+                "completion": completion1.text,
+                "raw_completion": completion1.raw_text,
                 "model": selected_models[0],
                 "pairCompletionId": completionId2,
                 "pairIndex": 0,
@@ -874,7 +881,7 @@ class FastAPIApp:
                 "prompt_length": prompt2_length,
                 "prefix_length": len(state.prefix),
                 "suffix_length": len(state.suffix),
-                "completion_length": len(completion2),
+                "completion_length": len(completion2.text),
                 "prompt_token_length": len(prompt2_tokens),
                 "prefix_token_length": len(prefix_tokens),
                 "suffix_token_length": len(suffix_tokens),
@@ -883,7 +890,8 @@ class FastAPIApp:
                 "completion_token_length": len(completion2_tokens),
                 "model_2_cost": model_2_cost,
                 "latency": latency2,
-                "completion": completion2,
+                "completion": completion2.text,
+                "raw_completion": completion2.raw_text,
                 "model": selected_models[1],
                 "pairCompletionId": completionId1,
                 "pairIndex": 1,

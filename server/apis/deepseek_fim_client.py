@@ -1,6 +1,6 @@
 import os
 from openai import AsyncOpenAI, APITimeoutError
-from apis.base_client import IBaseClient, LLMOptions, State
+from apis.base_client import IBaseClient, LLMOptions, State, LLMResponse
 from apis.utils import (
     generate_prompt_for_model,
     generate_stop_tokens_for_model,
@@ -38,7 +38,7 @@ class DeepseekFimClient(IBaseClient):
         state: State,
         model: str,
         options: LLMOptions,
-    ):
+    ) -> LLMResponse:
         raise NotImplementedError("Deepseek streaming not implemented.")
 
     async def create(
@@ -80,7 +80,7 @@ class DeepseekFimClient(IBaseClient):
                     self._prompt_generators, options.prompt_index, model
                 ),
             )
-            return completion
+            return LLMResponse(raw_text=response, text=completion)
         except APITimeoutError as e:
             raise ModelTimeoutError(model=model, original_error=e)
 

@@ -1,5 +1,5 @@
 import pytest
-from apis.base_client import State, LLMOptions
+from apis.base_client import State, LLMOptions, LLMResponse
 from apis.clients import (
     AnthropicClient,
     DeepseekClient,
@@ -36,7 +36,7 @@ async def test_anthropic_client(state, options):
     client = AnthropicClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"AnthropicClient response for {model}: {result}")
 
 
@@ -45,7 +45,7 @@ async def test_deepseek_client(state, options):
     client = DeepseekClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"DeepseekClient response for {model}: {result}")
 
 
@@ -54,7 +54,7 @@ async def test_deepseek_fim_client(state, options):
     client = DeepseekFimClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"DeepseekFimClient response for {model}: {result}")
 
 
@@ -63,7 +63,7 @@ async def test_mistral_client(state, options):
     client = MistralClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"MistralClient response for {model}: {result}")
 
 
@@ -72,7 +72,7 @@ async def test_openai_client(state, options):
     client = OpenAIClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"OpenAIClient response for {model}: {result}")
 
 
@@ -81,7 +81,7 @@ async def test_gemini_client(state, options):
     client = GeminiClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"GeminiClient response for {model}: {result}")
 
 
@@ -90,7 +90,7 @@ async def test_fireworks_ai_client(state, options):
     client = FireworksClient()
     for model in client.models:
         result = await client.create(state, model, options)
-        assert isinstance(result, str)
+        assert isinstance(result, LLMResponse)
         print(f"FireworksAIClient response for {model}: {result}")
 
 

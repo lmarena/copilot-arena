@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+from apis.base_client import LLMResponse
 from unittest.mock import patch
 from app import app
 from src.privacy import PrivacySetting
@@ -38,7 +39,9 @@ def mock_firebase_upload():
 def mock_timed_create():
     async def mock_timed_create_impl(client, state, model, options):
         # You can customize these return values as needed
-        result = f"Mocked completion for {model}"
+        result = LLMResponse(
+            text=f"Mocked completion for {model}", raw_text=f"raw_text"
+        )
         latency = 0.5
         return result, latency
 

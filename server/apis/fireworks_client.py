@@ -1,6 +1,6 @@
 import os
 from openai import AsyncOpenAI, APITimeoutError
-from apis.base_client import IBaseClient, LLMOptions, State
+from apis.base_client import IBaseClient, LLMOptions, State, LLMResponse
 from prompts.prompt_generator import PromptGenerator
 from apis.utils import (
     generate_prompt_for_model,
@@ -61,7 +61,7 @@ class FireworksClient(IBaseClient):
         state: State,
         model: str,
         options: LLMOptions,
-    ):
+    ) -> LLMResponse:
 
         if model not in self.models:
             raise ValueError(f"Model {model} is not supported.")
@@ -96,7 +96,7 @@ class FireworksClient(IBaseClient):
                 ),
             )
 
-            return completion
+            return LLMResponse(raw_text=response, text=completion)
         except APITimeoutError as e:
             raise ModelTimeoutError(model=model, original_error=e)
 

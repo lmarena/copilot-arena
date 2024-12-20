@@ -1,6 +1,6 @@
 import os
 from anthropic import AsyncAnthropic
-from apis.base_client import IBaseClient, LLMOptions, State
+from apis.base_client import IBaseClient, LLMOptions, State, LLMResponse
 from prompts.prompt_generator import PromptGenerator
 from apis.utils import (
     generate_prompt_for_model,
@@ -52,7 +52,7 @@ class AnthropicClient(IBaseClient):
         state: State,
         model: str,
         options: LLMOptions,
-    ):
+    ) -> LLMResponse:
         if model not in self.models:
             raise ValueError(f"Model {model} is not supported.")
 
@@ -89,7 +89,7 @@ class AnthropicClient(IBaseClient):
             ),
         )
 
-        return completion
+        return LLMResponse(raw_text=response, text=completion)
 
     def generate_prompt_for_model(self, state: State, model: str, prompt_index: int):
         return generate_prompt_for_model(

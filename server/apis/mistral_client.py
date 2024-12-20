@@ -1,7 +1,7 @@
 import os
 import asyncio
 from mistralai import Mistral
-from apis.base_client import IBaseClient, LLMOptions, State
+from apis.base_client import IBaseClient, LLMOptions, State, LLMResponse
 from apis.utils import (
     generate_prompt_for_model,
     generate_stop_tokens_for_model,
@@ -41,7 +41,7 @@ class MistralClient(IBaseClient):
         state: State,
         model: str,
         options: LLMOptions,
-    ):
+    ) -> LLMResponse:
         if model not in self.models:
             raise ValueError(f"Model {model} is not supported.")
 
@@ -77,7 +77,7 @@ class MistralClient(IBaseClient):
             if state.prefix.endswith(" ") and state.suffix.startswith("\n"):
                 completion = completion[1:]
 
-        return completion
+        return LLMResponse(raw_text=response, text=completion)
 
     def generate_prompt_for_model(self, state: State, model: str, prompt_index: int):
         return generate_prompt_for_model(

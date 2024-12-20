@@ -24,6 +24,16 @@ class State:
 
 
 @dataclass
+class LLMResponse:
+    """
+    Class to store model responses.
+    """
+
+    raw_text: str = ""
+    text: str = ""
+
+
+@dataclass
 class IBaseClient(ABC):
     """
     Interface for a model client that can stream or return responses based on a given prompt and model configuration.
@@ -55,7 +65,7 @@ class IBaseClient(ABC):
         state: State,
         model: str,
         options: LLMOptions,
-    ):
+    ) -> LLMResponse:
         """
         Create a response from a model based on the provided prompt and configuration parameters.
 
