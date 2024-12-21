@@ -26,14 +26,12 @@ class GeminiClient(IBaseClient):
             "gemini-1.5-pro-002",
             "gemini-1.5-flash-exp-0827",
             "gemini-1.5-pro-exp-0827",
+            "gemini-2.0-flash-exp",
         ]
         chat_prompt_generators = [
             PromptGenerator("templates/chat_psm_overlap.yaml"),
             PromptGenerator("templates/edit/chat_edit.yaml"),
         ]
-        # gemini_flash_prompt_generators = [
-        #     PromptGenerator("templates/eval/chat_rewrite.yaml"),
-        # ]
         self._prompt_generators = {
             "gemini-1.5-flash-001": chat_prompt_generators,
             "gemini-1.5-flash-002": chat_prompt_generators,
@@ -41,6 +39,7 @@ class GeminiClient(IBaseClient):
             "gemini-1.5-pro-002": chat_prompt_generators,
             "gemini-1.5-flash-exp-0827": chat_prompt_generators,
             "gemini-1.5-pro-exp-0827": chat_prompt_generators,
+            "gemini-2.0-flash-exp": chat_prompt_generators,
         }
 
     async def stream(
