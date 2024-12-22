@@ -49,6 +49,8 @@ from src.user_repository import (
     PasswordIncorrectError,
 )
 from src.errors import ModelTimeoutError
+from src.gcp_client import GCPClient
+import pandas as pd
 
 
 try:
@@ -249,6 +251,8 @@ class FastAPIApp:
         }
         print(self.model_probabilities)
 
+        self.gcp_client = GCPClient()
+
         # Initialize global_outcomes_df
         self.update_global_outcomes_df()
 
@@ -267,13 +271,19 @@ class FastAPIApp:
         logger.info("API is starting up")
 
     def update_global_outcomes_df(self):
-        autocomplete_outcomes_collection_name = self.settings[
-            self.FIREBASE_COLLECTIONS_KEY
-        ]["outcomes"]
-        self.global_outcomes_df = self.firebase_client.get_autocomplete_outcomes(
-            autocomplete_outcomes_collection_name
-        )
-        logger.info("Updated global_outcomes_df")
+        try:
+            bucket_name = self.settings.get("bucket_name")
+            file_path = self.settings.get("outcomes_file_path")
+
+            self.global_outcomes_df = self.gcp_client.get_outcomes_df(
+                bucket_name=bucket_name, file_path=file_path
+            )
+            logger.info(self.global_outcomes_df)
+            logger.info("Updated global_outcomes_df from GCS")
+        except Exception as e:
+            logger.error(f"Failed to update global_outcomes_df: {str(e)}")
+            # Initialize empty DataFrame if fetch fails
+            self.global_outcomes_df = pd.DataFrame()
 
     def add_client(self, client: IBaseClient):
         for model in client.models:

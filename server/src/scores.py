@@ -26,22 +26,50 @@ class BattleResult:
 
 def get_battle_df(outcomes_df, incl_models, interval_size):
     # Sort outcomes_df by timestamp from oldest to newest
+    orig_outcomes_df = outcomes_df
     outcomes_df = outcomes_df.sort_values(by=["timestamp"])
 
-    outcomes_df = (
-        outcomes_df.assign(
-            winner=lambda df: df["acceptedIndex"].map({0: "model_a", 1: "model_b"}),
-            model_a=lambda df: df["completionItems"].str[0].str["model"],
-            model_b=lambda df: df["completionItems"].str[1].str["model"],
-            completion_id_a=lambda df: df["completionItems"].str[0].str["completionId"],
-            completion_id_b=lambda df: df["completionItems"].str[1].str["completionId"],
+    try:
+        outcomes_df = (
+            outcomes_df.assign(
+                winner=lambda df: df["acceptedIndex"].map({0: "model_a", 1: "model_b"}),
+                model_a=lambda df: df["model_a"],
+                model_b=lambda df: df["model_b"],
+                completion_id_a=lambda df: df["completion_id_a"],
+                completion_id_b=lambda df: df["completion_id_b"],
+            )
+            .loc[
+                lambda df: df["model_a"].isin(incl_models)
+                & df["model_b"].isin(incl_models)
+            ]
+            .sort_values(by=["timestamp"])
+            .assign(
+                interval=lambda df: (np.arange(len(df)) // interval_size).astype(int)
+            )
         )
-        .loc[
-            lambda df: df["model_a"].isin(incl_models) & df["model_b"].isin(incl_models)
-        ]
-        .sort_values(by=["timestamp"])
-        .assign(interval=lambda df: (np.arange(len(df)) // interval_size).astype(int))
-    )
+    except Exception:
+        outcomes_df = orig_outcomes_df
+        outcomes_df = (
+            outcomes_df.assign(
+                winner=lambda df: df["acceptedIndex"].map({0: "model_a", 1: "model_b"}),
+                model_a=lambda df: df["completionItems"].str[0].str["model"],
+                model_b=lambda df: df["completionItems"].str[1].str["model"],
+                completion_id_a=lambda df: df["completionItems"]
+                .str[0]
+                .str["completionId"],
+                completion_id_b=lambda df: df["completionItems"]
+                .str[1]
+                .str["completionId"],
+            )
+            .loc[
+                lambda df: df["model_a"].isin(incl_models)
+                & df["model_b"].isin(incl_models)
+            ]
+            .sort_values(by=["timestamp"])
+            .assign(
+                interval=lambda df: (np.arange(len(df)) // interval_size).astype(int)
+            )
+        )
 
     if outcomes_df.empty:
         return pd.DataFrame()
@@ -396,3 +424,51 @@ def get_scores(
     elo_ratings_over_time.append(elo_ratings_list)
 
     return elo_ratings_over_time
+
+
+def main():
+    """
+    Test function to demonstrate scoring functionality using GCP data
+    """
+    from gcp_client import GCPClient
+    from utils import get_settings
+
+    # Initialize settings and GCP client
+    settings = get_settings()
+    gcp_client = GCPClient()
+
+    # Get models from settings
+    models = [model_name for model_name, model_info in settings["models"].items()]
+
+    # Pull global outcomes data from GCP
+    bucket_name = settings.get("bucket_name")
+    file_path = settings.get("outcomes_file_path")
+    global_outcomes_df = gcp_client.get_outcomes_df(
+        bucket_name=bucket_name, file_path=file_path
+    )
+    print("Global outcomes shape:", global_outcomes_df.shape)
+
+    # Create a sample user outcomes dataframe (using a subset of global data)
+    # In practice, this would come from Firebase for a specific user
+    sample_user_df = global_outcomes_df.head(
+        100
+    )  # Just using first 100 rows as example
+    print("Sample user outcomes shape:", sample_user_df.shape)
+
+    # Calculate scores
+    scores = get_scores(
+        global_outcomes_df=global_outcomes_df,
+        user_outcomes_df=sample_user_df,
+        models=models,
+        interval_size=20,
+    )
+
+    print("\nCalculated scores:")
+    for model_scores in scores:
+        print("\nInterval scores:")
+        for score in model_scores:
+            print(f"{score['model']}: {score['elo']} (votes: {score['votes']})")
+
+
+if __name__ == "__main__":
+    main()

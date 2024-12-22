@@ -173,3 +173,4 @@ data/
 config/*
 fly.toml
 templates/eval
+slim.py
