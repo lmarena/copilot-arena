@@ -5,7 +5,7 @@ import numpy as np
 from scipy import stats
 from fastapi.testclient import TestClient
 from app import fastapp  # Import the existing FastAPI app instance
-from src.utils import get_settings
+from src.utils import get_settings, get_models_by_tags
 
 
 @pytest.fixture(scope="session")
@@ -22,7 +22,7 @@ def n_trials():
     return 300000
 
 
-def get_ground_truth_probabilities():
+def get_ground_truth_probabilities(is_edit=False):
     """
     Extract ground truth probabilities from the YAML config file.
     Returns a dictionary of model names to their normalized probabilities.
@@ -30,138 +30,114 @@ def get_ground_truth_probabilities():
     # Read the YAML file
     config = get_settings()
 
-    # Extract weights for active models (not commented out)
-    model_weights = {
-        model_name: model_info["weight"]
-        for model_name, model_info in config["models"].items()
-    }
+    # Get the distribution for the correct request type
+    dist_key = "edit" if is_edit else "autocomplete"
+    distribution = config.get("dist", {}).get(dist_key, {})
 
-    # Calculate total weight for normalization
-    total_weight = sum(model_weights.values())
+    # Initialize probability counters for each model
+    model_probs = {}
 
-    # Calculate normalized probabilities
-    probabilities = {
-        model_name: weight / total_weight
-        for model_name, weight in model_weights.items()
-    }
+    # Calculate probability for each model based on pair distributions
+    for pair_str, prob in distribution.items():
+        model1, model2 = pair_str.split("|||")
 
-    return probabilities
+        # Add probability for first model
+        if model1 not in model_probs:
+            model_probs[model1] = 0
+        model_probs[model1] += prob / 2  # Divide by 2 because order is randomized
 
-
-def calculate_expected_paired_probabilities(ground_truth_probs):
-    """
-    Calculate expected probabilities when sampling pairs without replacement.
-
-    For each model M, its total probability is:
-    P(M) = P(M selected first) + P(M selected second)
-    = P(M first) + sum[P(other first) * P(M second | other first)]
-    """
-    models = list(ground_truth_probs.keys())
-    n_models = len(models)
-    adjusted_probs = {}
-
-    for model in models:
-        prob = 0
-        # Probability of being selected first
-        prob_first = ground_truth_probs[model]
-
-        # Probability of being selected second
-        for other_model in models:
-            if other_model != model:
-                # If other_model is selected first (prob_first_other),
-                # then model's prob of being selected second is its weight divided by
-                # sum of all weights except other_model's weight
-                prob_first_other = ground_truth_probs[other_model]
-                remaining_weight = sum(
-                    ground_truth_probs[m] for m in models if m != other_model
-                )
-                prob_second_given_first = ground_truth_probs[model] / remaining_weight
-                prob += prob_first_other * prob_second_given_first
-
-        # Total probability is sum of being selected first or second
-        total_prob = prob_first + prob
-        adjusted_probs[model] = total_prob
+        # Add probability for second model
+        if model2 not in model_probs:
+            model_probs[model2] = 0
+        model_probs[model2] += prob / 2  # Divide by 2 because order is randomized
 
     # Normalize probabilities
-    total = sum(adjusted_probs.values())
-    return {model: prob / total for model, prob in adjusted_probs.items()}
+    total_prob = sum(model_probs.values())
+    if total_prob > 0:
+        return {model: prob / total_prob for model, prob in model_probs.items()}
+    return {}
 
 
 def test_model_distribution(fast_app, n_trials):
     """Test if the distribution of individual model selections matches expected probabilities"""
-    # Get ground truth probabilities from config
-    ground_truth_probs = get_ground_truth_probabilities()
+    # Test both autocomplete and edit distributions
+    for is_edit in [False, True]:
+        tags = ["edit"] if is_edit else []
+        request_type = "edit" if is_edit else "autocomplete"
 
-    # Calculate adjusted probabilities for paired sampling
-    expected_probs = calculate_expected_paired_probabilities(ground_truth_probs)
+        # Get ground truth probabilities from config
+        expected_probs = get_ground_truth_probabilities(is_edit)
+        if not expected_probs:
+            continue  # Skip if no distribution defined for this type
 
-    # Collect samples - count each model individually
-    selected_models = []
-    for _ in range(n_trials):
-        models, _, _ = fast_app.select_models(tags=[])
-        selected_models.extend(models)
+        # Collect samples
+        selected_models = []
+        for _ in range(n_trials):
+            models, _, _ = fast_app.select_models(tags=tags)
+            selected_models.extend(models)
 
-    # Count occurrences of each model
-    model_counts = Counter(selected_models)
+        # Count occurrences of each model
+        model_counts = Counter(selected_models)
+        total_selections = n_trials * 2
 
-    # Calculate total selections (2 models per trial)
-    total_selections = n_trials * 2
+        # Print analysis
+        print(f"\nModel Distribution Analysis ({request_type}):")
+        print("\nProbability Comparison:")
+        print(f"{'Model':<30} {'Expected':<12} {'Observed':<12} {'Diff %':<10}")
+        print("-" * 65)
 
-    # Print analysis
-    print("\nModel Distribution Analysis:")
-    print("\nProbability Comparison:")
-    print(
-        f"{'Model':<30} {'Original':<12} {'Adjusted':<12} {'Observed':<12} {'Diff %':<10}"
-    )
-    print("-" * 75)
+        # Prepare arrays for chi-square test
+        observed_freqs = []
+        expected_freqs = []
 
-    # Prepare arrays for chi-square test
-    observed_freqs = []
-    expected_freqs = []
+        for model in sorted(expected_probs.keys()):
+            expected_prob = expected_probs[model]
+            observed_count = model_counts[model]
+            observed_prob = observed_count / total_selections
+            diff_percent = ((observed_prob - expected_prob) / expected_prob) * 100
 
-    for model in sorted(ground_truth_probs.keys()):
-        original_prob = ground_truth_probs[model]
-        expected_prob = expected_probs[model]
-        observed_count = model_counts[model]
-        observed_prob = observed_count / total_selections
-        diff_percent = ((observed_prob - expected_prob) / expected_prob) * 100
+            print(
+                f"{model:<30} {expected_prob:>11.4f} {observed_prob:>11.4f} "
+                f"{diff_percent:>+9.1f}%"
+            )
 
-        print(
-            f"{model:<30} {original_prob:>11.4f} {expected_prob:>11.4f} "
-            f"{observed_prob:>11.4f} {diff_percent:>+9.1f}%"
+            expected_freqs.append(expected_prob * total_selections)
+            observed_freqs.append(observed_count)
+
+        # Perform chi-square test
+        chi2, p_value = stats.chisquare(observed_freqs, expected_freqs)
+
+        print("\nStatistical Analysis:")
+        print(f"Total selections: {total_selections}")
+        print(f"Chi-square statistic: {chi2:.4f}")
+        print(f"P-value: {p_value:.4f}")
+
+        # Assert that p-value is above threshold
+        assert p_value > 0.05, (
+            f"Distribution of selected models for {request_type} differs significantly "
+            f"from expected (p={p_value:.4f})"
         )
-
-        # Add to arrays for chi-square test
-        expected_freqs.append(expected_prob * total_selections)
-        observed_freqs.append(observed_count)
-
-    # Perform chi-square test
-    chi2, p_value = stats.chisquare(observed_freqs, expected_freqs)
-
-    print("\nStatistical Analysis:")
-    print(f"Total selections: {total_selections}")
-    print(f"Chi-square statistic: {chi2:.4f}")
-    print(f"P-value: {p_value:.4f}")
-
-    # Assert that p-value is above threshold
-    assert (
-        p_value > 0.05
-    ), f"Distribution of selected models differs significantly from expected (p={p_value:.4f})"
 
 
 def test_tag_filtering(fast_app):
     """Test if model selection respects tag filtering"""
-    # Test with a specific tag
-    test_tag = list(fast_app.tag_to_models.keys())[0]  # Get first available tag
-    tagged_models = fast_app.tag_to_models[test_tag]
-
-    # Sample multiple times with the tag
+    # Test with edit tag
+    edit_models = get_models_by_tags(["edit"], fast_app.models, fast_app.tag_to_models)
     for _ in range(100):
-        models, client1, client2 = fast_app.select_models(tags=[test_tag])
-        # Check if selected models have the required tag
+        models, _, _ = fast_app.select_models(tags=["edit"])
         assert all(
-            model in tagged_models for model in models
-        ), f"Selected models {models} don't all have tag {test_tag}"
+            model in edit_models for model in models
+        ), f"Selected models {models} don't all have edit tag"
+
+    # Test with autocomplete (no edit tag)
+    autocomplete_models = get_models_by_tags(
+        [], fast_app.models, fast_app.tag_to_models
+    )
+    for _ in range(100):
+        models, _, _ = fast_app.select_models(tags=[])
+        assert all(
+            model in autocomplete_models for model in models
+        ), f"Selected models {models} not in available models"
 
 
 def test_different_models(fast_app):

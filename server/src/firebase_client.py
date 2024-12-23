@@ -94,7 +94,7 @@ class FirebaseClient:
         if user_id not in self.call_timestamps:
             return True
         last_call_time = self.call_timestamps[user_id]
-        return datetime.now() - last_call_time > timedelta(seconds=15)
+        return datetime.now() - last_call_time > timedelta(seconds=1)
 
     def _update_call_timestamp(self, user_id: str):
         self.call_timestamps[user_id] = datetime.now()

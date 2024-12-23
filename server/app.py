@@ -233,23 +233,12 @@ class FastAPIApp:
 
         logger.info(f"models: {self.models}")
 
-        # Extract weights for active models (not commented out)
-        self.model_weights = {
-            model_name: model_info["weight"]
-            for model_name, model_info in self.settings["models"].items()
+        # Initialize distributions for each request type
+        self.distributions = {
+            "autocomplete": self.settings.get("dist", {}).get("autocomplete", {}),
+            "edit": self.settings.get("dist", {}).get("edit", {}),
         }
-
-        self.user_scores_cache = {}
-
-        # Calculate total weight for normalization
-        total_weight = sum(self.model_weights.values())
-
-        # Calculate normalized probabilities
-        self.model_probabilities = {
-            model_name: weight / total_weight
-            for model_name, weight in self.model_weights.items()
-        }
-        print(self.model_probabilities)
+        print(self.distributions)
 
         self.gcp_client = GCPClient()
 
@@ -297,26 +286,52 @@ class FastAPIApp:
         self.models = list(self.model_clients.keys())
 
     def select_models(self, tags):
+        # Determine if this is an edit request
+        is_edit = "edit" in tags
+        dist_key = "edit" if is_edit else "autocomplete"
+
+        # Get available models with required tags
         tagged_models = get_models_by_tags(tags, self.models, self.tag_to_models)
         if len(tagged_models) == 0:
-            tagged_models = self.models
-        model_probabilities = [
-            self.model_probabilities[model] for model in tagged_models
+            raise HTTPException(status_code=500, detail=f"Error in tagged models")
+
+        # Get all valid model pairs and their probabilities from the distribution
+        valid_pairs = []
+        probabilities = []
+
+        for pair_str, prob in self.distributions[dist_key].items():
+            model1, model2 = pair_str.split("|||")
+            if model1 in tagged_models and model2 in tagged_models:
+                valid_pairs.append((model1, model2))
+                probabilities.append(prob)
+
+        if not valid_pairs:
+            raise HTTPException(
+                status_code=500, detail=f"No valid model pairs found for tags: {tags}"
+            )
+
+        # Normalize probabilities
+        total_prob = sum(probabilities)
+        if total_prob == 0:
+            raise HTTPException(
+                status_code=500, detail="Distribution probabilities sum to 0"
+            )
+        normalized_probs = [p / total_prob for p in probabilities]
+
+        # Select a pair based on the normalized distribution
+        selected_pair = valid_pairs[
+            np.random.choice(len(valid_pairs), p=normalized_probs)
         ]
 
-        model_probabilities = np.array(model_probabilities) / sum(model_probabilities)
-
-        selected_models = np.random.choice(
-            tagged_models, size=2, replace=False, p=model_probabilities
-        ).tolist()
-
-        # Randomly shuffle the order of selected models
+        # Randomly shuffle the order
         if np.random.random() < 0.5:
-            selected_models = selected_models[::-1]
+            selected_pair = selected_pair[::-1]
 
-        client1: IBaseClient = self.model_clients.get(selected_models[0])
-        client2: IBaseClient = self.model_clients.get(selected_models[1])
-        return selected_models, client1, client2
+        # Get the clients for the selected models
+        client1: IBaseClient = self.model_clients.get(selected_pair[0])
+        client2: IBaseClient = self.model_clients.get(selected_pair[1])
+
+        return list(selected_pair), client1, client2
 
     def setup_routes(self):
         @self.app.post("/create_edit_pair")
