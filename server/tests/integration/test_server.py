@@ -195,5 +195,27 @@ def test_create_edit_pair(docker_compose):
     assert "responseItems" in response_data, "Response should contain responseItems"
 
 
+def test_user_scores(docker_compose):
+    """Test the user_scores endpoint."""
+    url = "http://localhost:8080/user_scores"
+
+    payload = {"userId": "test_user"}
+
+    response = requests.post(url, json=payload)
+
+    # Log response for debugging
+    print(f"Response status: {response.status_code}")
+    print(f"Response body: {response.text}")
+
+    # Assertions
+    assert (
+        response.status_code == 200
+    ), f"Expected status code 200, got {response.status_code}"
+
+    response_data = response.json()
+    # The response should be a dictionary containing model scores over time
+    assert isinstance(response_data, list), "Response should be a list"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

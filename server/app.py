@@ -233,6 +233,8 @@ class FastAPIApp:
 
         logger.info(f"models: {self.models}")
 
+        self.user_scores_cache = {}
+
         # Initialize distributions for each request type
         self.distributions = {
             "autocomplete": self.settings.get("dist", {}).get("autocomplete", {}),
