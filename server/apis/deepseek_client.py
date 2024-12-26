@@ -26,14 +26,18 @@ class DeepseekClient(IBaseClient):
             max_retries=MAX_RETRIES,
             timeout=TIMEOUT,
         )
-        self.models = ["deepseek-coder"]
+        self.models = ["deepseek-coder-v3"]
         chat_prompt_generators = [
             PromptGenerator("templates/chat_psm_overlap.yaml"),
             PromptGenerator("templates/edit/chat_edit.yaml"),
         ]
 
+        self.model_name_map = {
+            "deepseek-coder-v3": "deepseek-coder",
+        }
+
         self._prompt_generators = {
-            "deepseek-coder": chat_prompt_generators,
+            "deepseek-coder-v3": chat_prompt_generators,
         }
 
     async def stream(
@@ -59,7 +63,7 @@ class DeepseekClient(IBaseClient):
         try:
             response = await self.client.chat.completions.create(
                 messages=prompt,
-                model=model,
+                model=self.model_name_map[model],
                 temperature=options.temperature,
                 max_tokens=options.max_tokens,
                 top_p=options.top_p,

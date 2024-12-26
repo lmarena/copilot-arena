@@ -26,9 +26,9 @@ class DeepseekFimClient(IBaseClient):
             timeout=TIMEOUT,
             max_retries=MAX_RETRIES,
         )
-        self.models = ["deepseek-coder-fim"]
+        self.models = ["deepseek-coder-v3-fim"]
         self._prompt_generators = {
-            "deepseek-coder-fim": [
+            "deepseek-coder-v3-fim": [
                 PromptGenerator("templates/deepseek_fim.yaml"),
             ],
         }
