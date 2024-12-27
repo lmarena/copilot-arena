@@ -1,5 +1,5 @@
 prompt: |
-  {prefix}
+  <｜fim▁begin｜>{prefix}<｜fim▁hole｜>{suffix}<｜fim▁end｜>
 
 stop_tokens:
   - "\n\n"
@@ -11,3 +11,4 @@ stop_tokens:
 
 args:
   - prefix
+  - suffix
