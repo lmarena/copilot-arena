@@ -72,8 +72,6 @@ class FirebaseClient:
     def get_autocomplete_outcomes_count(self, collection_name: str, user_id):
         self.function_call_count["get_autocomplete_outcomes_count"] += 1
         print(self.function_call_count)
-        if user_id and not self._can_make_call(user_id):
-            raise Exception(f"Rate limit exceeded for user_id: {user_id}")
 
         query = self.db.collection(collection_name)
         if user_id:
