@@ -4,7 +4,7 @@ prompt: |
 stop_tokens:
   - "\n\n"
   - "\n \n"
-  - "<|eos_token|>"
+  - "<｜end▁of▁sentence｜>"
   - "<｜fim▁begin｜>"
   - "<｜fim▁hole｜>"
   - "<｜fim▁end｜>"
