@@ -1,13 +1,15 @@
+# Since deepseek_fim_client.py makes requests with a prefix/suffix directly, `prompt` and `args` are not utilized.
+
 prompt: |
   {prefix}
 
 stop_tokens:
   - "\n\n"
   - "\n \n"
-  - "<|eos_token|>"
-  - "<|fim_begin|>"
-  - "<|fim_hole|>"
-  - "<|fim_end|>"
+  - "<｜end▁of▁sentence｜>"
+  - "<｜fim▁begin｜>"
+  - "<｜fim▁hole｜>"
+  - "<｜fim▁end｜>"
 
 args:
   - prefix
