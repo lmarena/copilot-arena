@@ -21,11 +21,15 @@ except ImportError:
 class MistralClient(IBaseClient):
     def __init__(self) -> None:
         self.client = Mistral(api_key=MISTRAL_API_KEY, timeout_ms=TIMEOUT * 1000)
-        self.models = ["codestral-2405"]
+        self.models = ["codestral-2405", "codestral-2501"]
         self._prompt_generators = {
-            "codestral-2405": [
-                PromptGenerator("templates/codestral.yaml"),
-            ]
+            "codestral-2405": [PromptGenerator("templates/codestral.yaml")],
+            "codestral-2501": [PromptGenerator("templates/codestral.yaml")],
+        }
+
+        self.model_name_map = {
+            "codestral-2405": "codestral-2405",
+            "codestral-2501": "codestral-2412",
         }
 
     async def stream(
@@ -49,7 +53,7 @@ class MistralClient(IBaseClient):
         stop_tokens = self.generate_stop_tokens_for_model(model, options.prompt_index)
 
         response = await self.client.fim.complete_async(
-            model=model,
+            model=self.model_name_map[model],
             prompt=prompt,
             suffix=state.suffix,
             temperature=options.temperature,
