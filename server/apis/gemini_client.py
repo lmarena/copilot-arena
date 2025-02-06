@@ -20,13 +20,15 @@ class GeminiClient(IBaseClient):
     def __init__(self) -> None:
         genai.configure(api_key=GOOGLE_API_KEY)
         self.models = [
-            "gemini-1.5-flash-001",
+            # "gemini-1.5-flash-001",
             "gemini-1.5-flash-002",
-            "gemini-1.5-pro-001",
+            # "gemini-1.5-pro-001",
             "gemini-1.5-pro-002",
-            "gemini-1.5-flash-exp-0827",
-            "gemini-1.5-pro-exp-0827",
-            "gemini-2.0-flash-exp",
+            # "gemini-1.5-flash-exp-0827",
+            # "gemini-1.5-pro-exp-0827",
+            # "gemini-2.0-flash-exp",
+            "gemini-2.0-flash-001",
+            "gemini-2.0-pro-exp-02-05",
         ]
         chat_prompt_generators = [
             PromptGenerator("templates/chat_psm_overlap.yaml"),
@@ -40,6 +42,8 @@ class GeminiClient(IBaseClient):
             "gemini-1.5-flash-exp-0827": chat_prompt_generators,
             "gemini-1.5-pro-exp-0827": chat_prompt_generators,
             "gemini-2.0-flash-exp": chat_prompt_generators,
+            "gemini-2.0-flash-001": chat_prompt_generators,
+            "gemini-2.0-pro-exp-02-05": chat_prompt_generators,
         }
 
     async def stream(
