@@ -950,20 +950,19 @@ class FastAPIApp:
                     },
                 ),
             )
-            # Removing this data from firebase
-            # collection = self.settings[self.FIREBASE_COLLECTIONS_KEY]["all_completions"]
-            # background_tasks.add_task(
-            #     self.firebase_client.upload_data,
-            #     collection,
-            #     completionItem1,
-            #     privacy,
-            # )
-            # background_tasks.add_task(
-            #     self.firebase_client.upload_data,
-            #     collection,
-            #     completionItem2,
-            #     privacy,
-            # )
+            collection = self.settings[self.FIREBASE_COLLECTIONS_KEY]["all_completions"]
+            background_tasks.add_task(
+                self.firebase_client.upload_data,
+                collection,
+                completionItem1,
+                privacy,
+            )
+            background_tasks.add_task(
+                self.firebase_client.upload_data,
+                collection,
+                completionItem2,
+                privacy,
+            )
             latency_breakdown["firebase_upload"] = time.time() - firebase_upload_start
 
             # Final response
