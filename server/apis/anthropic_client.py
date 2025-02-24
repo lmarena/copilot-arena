@@ -26,6 +26,7 @@ class AnthropicClient(IBaseClient):
             "claude-3-haiku-20240307",
             "claude-3-5-sonnet-20240620",
             "claude-3-5-sonnet-20241022",
+            "claude-3-7-sonnet-20250219",
         ]
         chat_prompt_generators = [
             PromptGenerator("templates/chat_psm_overlap.yaml"),
@@ -37,6 +38,7 @@ class AnthropicClient(IBaseClient):
             "claude-3-haiku-20240307": chat_prompt_generators,
             "claude-3-5-sonnet-20240620": chat_prompt_generators,
             "claude-3-5-sonnet-20241022": chat_prompt_generators,
+            "claude-3-7-sonnet-20250219": chat_prompt_generators,
         }
 
     async def stream(
