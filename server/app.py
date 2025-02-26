@@ -151,57 +151,122 @@ class UpdateUser(BaseModel):
     metadata: Optional[UserMetadata] = None
 
 
-# Add this new function near the top of the file, after imports
-def handle_exceptions(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        request = next((arg for arg in args if isinstance(arg, Request)), None)
-        method = request.method if request else "UNKNOWN"
-        endpoint = request.url.path if request else f"/{func.__name__}"
-        try:
-            return await func(*args, **kwargs)
-        except HTTPException:
-            raise
-        except Exception as e:
-            if isinstance(e, ModelTimeoutError):
-                error_msg = f"Service temporarily unavailable due to timeout for model: {e.model}"
-                logger.error(error_msg)
-                ERROR_COUNT.labels(
-                    method=method,
-                    endpoint=endpoint,
-                    exception="TimeoutError",
-                    status=504,
-                ).inc()
-                raise HTTPException(
-                    status_code=504,
-                    detail="Timeout",
-                )
-            elif "429" in str(e):
-                logger.error("Rate limit exceeded.")
-                ERROR_COUNT.labels(
-                    method=method,
-                    endpoint=endpoint,
-                    exception="RateLimitExceeded",
-                    status=429,
-                ).inc()
-                raise HTTPException(
-                    status_code=429,
-                    detail="Rate limit exceeded. Please try again later.",
-                )
-            else:
-                error_msg = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
-                logger.error(error_msg)
-                ERROR_COUNT.labels(
-                    method=method,
-                    endpoint=endpoint,
-                    exception="ServerError",
-                    status=500,
-                ).inc()
-                raise HTTPException(
-                    status_code=500, detail="An internal server error occurred."
-                )
+def handle_exceptions(app_instance):
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            request = next((arg for arg in args if isinstance(arg, Request)), None)
+            method = request.method if request else "UNKNOWN"
+            endpoint = request.url.path if request else f"/{func.__name__}"
 
-    return wrapper
+            # Get user_id and model from request if available
+            user_id = None
+            model = None
+            try:
+                body = await request.json()
+                user_id = body.get("userId")
+                model = body.get("model")
+            except:
+                pass
+
+            try:
+                return await func(*args, **kwargs)
+            except HTTPException:
+                raise
+            except Exception as e:
+                if isinstance(e, ModelTimeoutError):
+                    error_msg = f"Service temporarily unavailable due to timeout for model: {e.model}"
+                    logger.error(error_msg)
+                    ERROR_COUNT.labels(
+                        method=method,
+                        endpoint=endpoint,
+                        exception="TimeoutError",
+                        status=504,
+                    ).inc()
+
+                    # Track timeout error in Amplitude
+                    app_instance.amplitude.track(
+                        BaseEvent(
+                            event_type="error",
+                            user_id=user_id or "anonymous",
+                            event_properties={
+                                "error_type": "TimeoutError",
+                                "model": e.model or model,
+                                "endpoint": endpoint,
+                                "method": method,
+                                "status": 504,
+                                "error_message": str(e),
+                            },
+                        )
+                    )
+
+                    raise HTTPException(
+                        status_code=504,
+                        detail="Timeout",
+                    )
+                elif "429" in str(e):
+                    logger.error("Rate limit exceeded.")
+                    ERROR_COUNT.labels(
+                        method=method,
+                        endpoint=endpoint,
+                        exception="RateLimitExceeded",
+                        status=429,
+                    ).inc()
+
+                    # Track rate limit error in Amplitude
+                    app_instance.amplitude.track(
+                        BaseEvent(
+                            event_type="error",
+                            user_id=user_id or "anonymous",
+                            event_properties={
+                                "error_type": "RateLimitExceeded",
+                                "model": model,
+                                "endpoint": endpoint,
+                                "method": method,
+                                "status": 429,
+                                "error_message": str(e),
+                            },
+                        )
+                    )
+
+                    raise HTTPException(
+                        status_code=429,
+                        detail="Rate limit exceeded. Please try again later.",
+                    )
+                else:
+                    error_msg = f"An error occurred: {str(e)}\n\nTraceback:\n{traceback.format_exc()}"
+                    logger.error(error_msg)
+                    ERROR_COUNT.labels(
+                        method=method,
+                        endpoint=endpoint,
+                        exception="ServerError",
+                        status=500,
+                    ).inc()
+
+                    # Track general server error in Amplitude
+                    app_instance.amplitude.track(
+                        BaseEvent(
+                            event_type="error",
+                            user_id=user_id or "anonymous",
+                            event_properties={
+                                "error_type": "ServerError",
+                                "model": model,
+                                "endpoint": endpoint,
+                                "method": method,
+                                "status": 500,
+                                "error_message": str(e),
+                                "traceback": traceback.format_exc(),
+                            },
+                        )
+                    )
+
+                    raise HTTPException(
+                        status_code=500, detail="An internal server error occurred."
+                    )
+
+        return wrapper
+
+    return decorator
 
 
 class FastAPIApp:
@@ -338,7 +403,7 @@ class FastAPIApp:
     def setup_routes(self):
         @self.app.post("/create_edit_pair")
         @self.limiter.limit("300/minute")
-        @handle_exceptions
+        @handle_exceptions(self)
         async def create_edit_pair(request: Request, background_tasks: BackgroundTasks):
             start_time = time.time()
             latency_breakdown = {}
@@ -665,7 +730,7 @@ class FastAPIApp:
 
         @self.app.post("/create_pair")
         @self.limiter.limit("300/minute")
-        @handle_exceptions
+        @handle_exceptions(self)
         async def create_pair(request: Request, background_tasks: BackgroundTasks):
             start_time = time.time()
             latency_breakdown = {}
