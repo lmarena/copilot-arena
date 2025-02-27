@@ -1,0 +1,272 @@
+{
+  "name": "copilot-arena",
+  "displayName": "Copilot Arena",
+  "publisher": "copilot-arena",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lm-sys/copilot-arena"
+  },
+  "homepage": "https://github.com/lmarena/copilot-arena/blob/main/README.md",
+  "icon": "icons/copilot-arena-icon.png",
+  "description": "Code with and evaluate the latest LLMs and Code Completion models",
+  "version": "1.2.6",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "AI"
+  ],
+  "keywords": [
+    "ai",
+    "autocomplete",
+    "arena",
+    "c#",
+    "c++",
+    "code-referencing",
+    "codex",
+    "copilot",
+    "co-pilot",
+    "documentation",
+    "go",
+    "golang",
+    "intellisense",
+    "java",
+    "javascript",
+    "keybindings",
+    "kotlin",
+    "openai",
+    "php",
+    "pilot",
+    "python",
+    "refactor",
+    "ruby",
+    "snippets",
+    "typescript"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Server URL",
+      "properties": {
+        "arena.serverUrl": {
+          "type": "string",
+          "default": "https://code-arena.fly.dev",
+          "markdownDescription": "The URL for the Arena server."
+        },
+        "arena.enableTabAutocomplete": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enable Arena's tab autocomplete feature."
+        },
+        "arena.enableAutomaticTabAutocomplete": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Enables automatic autocomplete suggestions while typing. Turn off to force manual invocations."
+        },
+        "arena.maxOutputLines": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "markdownDescription": "Limit the number of lines of code that can be outputted."
+        },
+        "arena.displayCompletionIds": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Display completion ids. This is used only for debugging purposes."
+        },
+        "arena.codePrivacySettings": {
+          "type": "string",
+          "enum": [
+            "Private",
+            "Debug",
+            "Research"
+          ],
+          "default": "Research",
+          "markdownDescription": "Choose your privacy settings for Code Arena:\n- Private: No code is collected (code is still sent to API providers)\n- Debug: Code is only collected as debug logs\n- Research: Code is uploaded to Code Arena's private servers for research purposes. Your votes are always stored.",
+          "enumDescriptions": [
+            "No code is collected (code is still sent to API providers)",
+            "Code is only collected as debug logs",
+            "Code is uploaded to Code Arena's private servers for research purposes"
+          ]
+        },
+        "arena.enableInlineEditHover": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Controls whether to show the inline edit hover text when hovering over code or making selections."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "arena.selectFirstInlineCompletion",
+        "title": "Arena: Select First Inline Completion"
+      },
+      {
+        "command": "arena.selectSecondInlineCompletion",
+        "title": "Arena: Select Second Inline Completion"
+      },
+      {
+        "command": "arena.toggleTabAutocompleteEnabled",
+        "title": "Arena: Toggle Autocomplete Enabled"
+      },
+      {
+        "command": "arena.clearCompletionsCache",
+        "title": "Arena: Clear Completions Cache"
+      },
+      {
+        "command": "arena.promptToDiff",
+        "title": "Generate Code from Prompt"
+      },
+      {
+        "command": "arena.acceptVerticalDiffBlock",
+        "title": "Arena: Accept Vertical Diff Block"
+      },
+      {
+        "command": "arena.rejectVerticalDiffBlock",
+        "title": "Arena: Reject Vertical Diff Block"
+      },
+      {
+        "command": "arena.acceptFirstLLMResponse",
+        "title": "Arena: Accept First LLM Response"
+      },
+      {
+        "command": "arena.acceptSecondLLMResponse",
+        "title": "Arena: Accept Second LLM Response"
+      },
+      {
+        "command": "arena.rejectAllResponses",
+        "title": "Arena: Reject All LLM Responses"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "arena.selectFirstInlineCompletion",
+        "mac": "tab",
+        "key": "tab",
+        "win": "tab",
+        "linux": "tab",
+        "when": "editorTextFocus && inlineSuggestionVisible && arena.tabAutocompleteEnabled"
+      },
+      {
+        "command": "arena.selectSecondInlineCompletion",
+        "mac": "shift+tab",
+        "key": "shift+tab",
+        "win": "shift+tab",
+        "linux": "shift+tab",
+        "when": "editorTextFocus && inlineSuggestionVisible && arena.tabAutocompleteEnabled"
+      },
+      {
+        "command": "arena.acceptVerticalDiffBlock",
+        "key": "cmd+y",
+        "mac": "cmd+y",
+        "win": "ctrl+y",
+        "linux": "ctrl+y",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "arena.rejectVerticalDiffBlock",
+        "key": "cmd+3",
+        "mac": "cmd+3",
+        "win": "ctrl+3",
+        "linux": "ctrl+3",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "arena.acceptFirstLLMResponse",
+        "key": "cmd+1",
+        "mac": "cmd+1",
+        "win": "ctrl+1",
+        "linux": "ctrl+1",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "arena.acceptSecondLLMResponse",
+        "key": "cmd+2",
+        "mac": "cmd+2",
+        "win": "ctrl+2",
+        "linux": "ctrl+2",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "arena.rejectAllResponses",
+        "key": "cmd+3",
+        "mac": "cmd+3",
+        "win": "ctrl+3",
+        "linux": "ctrl+3",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "arena.promptToDiff",
+        "key": "cmd+i",
+        "mac": "cmd+i",
+        "win": "ctrl+i",
+        "linux": "ctrl+i",
+        "when": "editorTextFocus"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeArenaContainer",
+          "title": "Copilot Arena",
+          "icon": "icons/swords.png"
+        }
+      ]
+    },
+    "views": {
+      "codeArenaContainer": [
+        {
+          "type": "webview",
+          "id": "rankingChartView",
+          "name": "Personal Statistics"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js && webpack --mode production --config webpack.config.js",
+    "compile-dev": "npm run check-types && npm run lint && node esbuild.js && webpack --mode development --config webpack.config.js",
+    "watch": "npm-run-all -p watch:* && webpack --watch",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production && webpack --mode production --config webpack.config.js --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/recharts": "^1.8.29",
+    "@types/sql.js": "^1.4.9",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.11.0",
+    "@vscode/test-cli": "^0.0.9",
+    "@vscode/test-electron": "^2.4.0",
+    "esbuild": "^0.21.5",
+    "eslint": "^8.57.0",
+    "npm-run-all": "^4.1.5",
+    "ts-loader": "^9.2.6",
+    "typescript": "^5.5.3",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1"
+  },
+  "dependencies": {
+    "sql.js": "^1.10.3",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.7.2",
+    "react": "^18.2.0"
+  }
+}

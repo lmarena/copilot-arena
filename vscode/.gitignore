@@ -1,0 +1,10 @@
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+.DS_Store
+test_python.py
+media/rankingChart.js*
+.aider*
+.env
