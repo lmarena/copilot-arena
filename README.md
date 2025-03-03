@@ -22,7 +22,7 @@ Copilot Arena is an open source AI coding assistant that provides paired autocom
 
 Step 1: Download the Copilot Arena extension from the [Visual Studio Code Store](https://marketplace.visualstudio.com/items?itemName=copilot-arena.copilot-arena). 
 - If installed successfully, you will see Arena show up on the bottom right corner of your window and the check mark changes to a spinning circle when a completion is being generated, 
-- Note, if you are using any other completion provider (e.g. Github Copilot), you must disable them when using Copilot Arena.
+- Note, if you are using any other completion provider (e.g. GitHub Copilot), you must disable them when using Copilot Arena.
 
 Step 2: Copilot Arena currently supports two main feature: read [autocomplete](#autocomplete) and [in-line editing](#in-line-editing) below to understand how to use each one. Since we show paired responses, the way you use them are slightly different than your standard AI coding tools!
 
