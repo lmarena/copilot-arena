@@ -289,7 +289,7 @@ class FastAPIApp:
         self.add_client(OpenAIClient())
         self.add_client(AnthropicClient())
         self.add_client(GeminiClient())
-        self.add_client(FireworksClient())
+        # self.add_client(FireworksClient())
         # self.add_client(DeepseekClient())
         # FiM Clients
         self.add_client(MistralClient())
