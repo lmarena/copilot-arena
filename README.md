@@ -117,4 +117,20 @@ Prior to releasing any collected code snippets to enable future research efforts
 
 ## Have a question?
 
-If you have feedback or suggestions, please submit an issue or join the conversation on [**Discord**](https://discord.gg/z4yzaj7bf7x)! Check out our [FAQs](FAQ.md). 
+If you have feedback or suggestions, please submit an issue or join the conversation on [**Discord**](https://discord.gg/z4yzaj7bf7x)! Check out our [FAQs](FAQ.md).
+
+## Citation
+
+If you find this repository useful, pleaes cite copilot arena:  
+
+```bibtex
+@misc{chi2025copilotarenaplatformcode,
+      title={Copilot Arena: A Platform for Code LLM Evaluation in the Wild}, 
+      author={Wayne Chi and Valerie Chen and Anastasios Nikolas Angelopoulos and Wei-Lin Chiang and Aditya Mittal and Naman Jain and Tianjun Zhang and Ion Stoica and Chris Donahue and Ameet Talwalkar},
+      year={2025},
+      eprint={2502.09328},
+      archivePrefix={arXiv},
+      primaryClass={cs.SE},
+      url={https://arxiv.org/abs/2502.09328}, 
+}
+```
